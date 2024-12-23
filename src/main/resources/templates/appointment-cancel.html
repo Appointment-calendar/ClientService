@@ -1,0 +1,549 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Appointment</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="sidebar">
+            <button id="backButton" class="sidebar-button">Back to Management</button>
+        </div>
+
+        
+        <div class="content">
+            <h2>Cancel Appointment</h2>
+            
+            <form id="cancelAppointmentForm" th:action="@{/patient/{patientId}/appointments/cancel(patientId=${patientId})}" method="post" onsubmit="handleRedirect(event)">
+                <div class="form-group">
+                    <label for="appointmentId">Appointment ID:</label>
+                    <input type="text" id="appointmentId" name="appointmentId" placeholder="Enter appointment ID" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="cancelReason">Reason for Cancellation:</label>
+                    <textarea id="cancelReason" name="cancelReason" placeholder="Enter reason for cancellation" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-button">Cancel Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function getPatientId() {
+			// Extract patientId from the URL path
+			const pathParts = window.location.pathname.split('/'); // Split the URL path into parts
+			return pathParts[2]; // Assuming the patientId is the second segment (index 2) of the path
+		}
+
+        // Redirect to the appointment list for the specific patient when the back button is clicked
+        document.getElementById('backButton').onclick = function() {
+            const patientId = getPatientId();
+            if(patientId) {
+                window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`;
+
+            } else {
+                alert('Patient ID is missing');
+            }
+        };
+    </script>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            flex: 1 1 250px;
+            background-color: #d9534f;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-button {
+            background-color: #c9302c;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            width: 90%;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-button:hover {
+            background-color: #ac2925;
+        }
+
+        /* Form Content Styling */
+        .content {
+            flex: 2 1 600px;
+            padding: 20px;
+            background-color: white;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #d9534f;
+        }
+
+        textarea {
+            resize: none; 
+            height: 80px;
+        }
+
+        .submit-button {
+            background-color: #d9534f;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .sidebar-button,
+            .submit-button {
+                font-size: 1em;
+                padding: 8px 12px;
+            }
+
+            input,
+            textarea {
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .content {
+                width: 100%;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-button,
+            .submit-button {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            label {
+                font-size: 0.9em;
+            }
+
+            input,
+            textarea {
+                font-size: 0.85em;
+                padding: 8px;
+            }
+        }
+    </style>
+
+    <script>
+        function handleRedirect(event) {
+            event.preventDefault();
+
+            // Send form data using Fetch API
+            fetch(`http://localhost:8080/patient/${patientId}/appointments/cancel`, {
+                method: 'POST',
+                body: new FormData(document.getElementById('cancelAppointmentForm'))
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/patient/{patientId}/appointments';  // Redirect after success
+                } else {
+                    alert('Failed to cancel the appointment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error processing your request.');
+            });
+        }
+
+//         const cancelAppointment = async () => {
+//     try {
+//         const response = await fetch(`http://localhost:8080/patient/${patientId}/appointments/cancel`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded',
+//             },
+//             body: new URLSearchParams({
+//                 appointmentId: selectedAppointmentId, // Ensure this ID exists
+//                 cancelReason: cancelReasonText,      // Ensure this reason is provided
+//             }),
+//         });
+
+//         if (!response.ok) {
+//             const errorData = await response.json();
+//             throw new Error(errorData.error || 'Failed to cancel appointment');
+//         }
+
+//         alert('Appointment canceled successfully');
+//     } catch (error) {
+//         console.error('Error canceling appointment:', error);
+//         alert('An error occurred while canceling your request.');
+//     }
+// };
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Appointment</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="sidebar">
+            <button id="backButton" class="sidebar-button" onclick="window.location.href='/appointments'">Back to Management</button>
+        </div>
+
+        
+        <div class="content">
+            <h2>Cancel Appointment</h2>
+            <form id="cancelAppointmentForm" action="/appointments/cancel" method="post" onsubmit="handleRedirect(event)">
+                <div class="form-group">
+                    <label for="appointmentId">Appointment ID:</label>
+                    <input type="text" id="appointmentId" name="appointmentId" placeholder="Enter appointment ID" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="cancelReason">Reason for Cancellation:</label>
+                    <textarea id="cancelReason" name="cancelReason" placeholder="Enter reason for cancellation" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-button">Cancel Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            flex: 1 1 250px;
+            background-color: #d9534f;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-button {
+            background-color: #c9302c;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            width: 90%;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-button:hover {
+            background-color: #ac2925;
+        }
+
+        /* Form Content Styling */
+        .content {
+            flex: 2 1 600px;
+            padding: 20px;
+            background-color: white;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #d9534f;
+        }
+
+        textarea {
+            resize: none; /* Prevent resizing */
+            height: 80px;
+        }
+
+        .submit-button {
+            background-color: #d9534f;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #c9302c;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .sidebar-button,
+            .submit-button {
+                font-size: 1em;
+                padding: 8px 12px;
+            }
+
+            input,
+            textarea {
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .content {
+                width: 100%;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar-button,
+            .submit-button {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            label {
+                font-size: 0.9em;
+            }
+
+            input,
+            textarea {
+                font-size: 0.85em;
+                padding: 8px;
+            }
+        }
+    </style>
+
+    <script>
+        function handleRedirect(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
+
+            // Perform the form submission via AJAX (if needed)
+            // Example: use fetch API to submit form data, then redirect
+            fetch('/appointments/cancel', {
+                method: 'POST',
+                body: new FormData(document.getElementById('cancelAppointmentForm'))
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirect to the appointment page after successful cancellation
+                    window.location.href = '/appointments';
+                } else {
+                    // Handle error if necessary
+                    alert('Failed to cancel the appointment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error processing your request.');
+            });
+        }
+    </script>
+</body>
+</html> -->

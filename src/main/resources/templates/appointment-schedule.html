@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Appointment</title>
+    <!-- <link rel="stylesheet" href="/css/style.css"> -->
+</head>
+<body>
+    <div class="container">
+        
+        <div class="sidebar">
+            <button id="backButton" class="sidebar-button">Back to Management</button>
+        </div>
+
+        
+        <div class="content">
+            <h2>Schedule Appointment</h2>
+            <form id="appointmentForm" th:action="@{/patient/{patientId}/appointments/schedule(patientId=${patientId})}" method="post" onsubmit="return submitForm(event)">
+                <div class="form-group">
+                    <label for="patientId">Patient ID:</label>
+                    <input type="number" id="patientId" name="patientId" th:value="${patientId}" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason for Appointment:</label>
+                    <input type="text" id="reason" name="reason" placeholder="Enter reason" required />
+                </div>
+
+                <!-- <div class="form-group">
+                    <label for="doctorId">Select Doctor:</label>
+                    <select id="doctorId" name="doctorId" required>
+                        <option value="" disabled selected>Select a doctor</option>
+                        <th:block th:each="doctor : ${doctors}">
+                            <option th:value="${doctor.id}" th:text="${doctor.name}"></option>
+                        </th:block>
+                    </select>
+                </div> -->
+
+				<div class="form-group">
+					<label for="doctorId">Select Doctor:</label>
+					<select id="doctorId" name="doctorId" required>
+						<option value="" disabled selected>Select a doctor</option>
+						<!-- Options will be added dynamically using javascript  -->
+					</select>
+				</div>
+				
+
+                <div class="form-group">
+                    <label for="appointmentDate">Appointment Date:</label>
+                    <input type="date" id="appointmentDate" name="appointmentDate" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentTime">Appointment Time:</label>
+                    <input type="time" id="appointmentTime" name="appointmentTime" required />
+                </div>
+
+                <input type="hidden" name="status" value="pending" />
+
+                <button type="submit" class="submit-button">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to get patientId from the URL query parameters
+
+		// function getPatientId() {
+        //     // Fetch patientId dynamically from URL
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     return urlParams.get('patientId'); // Assuming the patientId is passed as a query parameter
+        // }
+
+		function getPatientId() {
+			// Extract patientId from the URL path
+			const pathParts = window.location.pathname.split('/'); // Split the URL path into parts
+			return pathParts[2]; // Assuming the patientId is the second segment (index 2) of the path
+		}
+
+        // Redirect to the appointment list for the specific patient when the back button is clicked
+        document.getElementById('backButton').onclick = function() {
+            const patientId = getPatientId();
+            if(patientId) {
+                window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`;
+
+            } else {
+                alert('Patient ID is missing');
+            }
+        };
+
+        // Function to handle form submission and redirect after successful booking
+        // function submitForm(event) {
+        //     event.preventDefault(); // Prevent the default form submission
+
+        //     const form = document.getElementById('appointmentForm');
+        //     const patientId = getPatientId();
+
+        //     // Simulate form submission (e.g., using AJAX or fetch here)
+        //     setTimeout(function() {
+        //         // After a successful form submission, redirect to the patient's appointments page
+        //         window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`; // Redirect to the correct page
+        //     }, 500); // Slight delay to simulate form submission
+        // }
+
+
+        function submitForm(event) {
+       event.preventDefault(); // Prevent the default form submission
+
+    const form = document.getElementById('appointmentForm');
+    const patientId = getPatientId();
+    
+    // Get form data
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Send data to backend using fetch
+    fetch(`http://localhost:8081/patient/${patientId}/appointments/schedule`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data), // Convert form data to JSON
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Handle success response
+        alert('Appointment scheduled successfully');
+        window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`; // Redirect to appointments page
+    })
+    .catch(error => {
+        // Handle error
+        console.error('Error scheduling appointment:', error);
+        alert('Failed to schedule appointment');
+    });
+}
+
+
+
+
+		
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("http://localhost:8080/api/doctors")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch doctors");
+                }
+                return response.json();
+            })
+            .then(doctors => {
+                const doctorSelect = document.getElementById("doctorId");
+                doctors.forEach(doctor => {
+                    const option = document.createElement("option");
+                    option.value = doctor.id;
+                    option.textContent = doctor.name;
+                    doctorSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+    const doctorSelect = document.getElementById("doctorId");
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "Unable to load doctors";
+    option.disabled = true;
+    doctorSelect.appendChild(option);
+});
+
+    });
+
+
+    </script>
+
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: #6b5b95;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            flex: 1;
+            background-color: #6b5b95;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-button {
+            background-color: #805ad5;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-button:hover {
+            background-color: #6b46c1;
+        }
+
+        /* Content Styling */
+        .content {
+            flex: 2;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #6b5b95;
+        }
+
+        input[readonly] {
+            background-color: #f0f4f8;
+            cursor: not-allowed;
+        }
+
+        .submit-button {
+            background-color: #6b5b95;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #805ad5;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.5em;
+            }
+
+            label {
+                font-size: 0.9em;
+            }
+
+            input,
+            select {
+                font-size: 0.85em;
+            }
+
+            .submit-button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</body>
+</html>
+
