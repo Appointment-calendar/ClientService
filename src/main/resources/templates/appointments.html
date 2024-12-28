@@ -4,60 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Management</title>
-    <!-- <link rel="stylesheet" href="/css/style.css"> -->
-</head>
-<body>
-    <div class="container">
-
-        <div class="sidebar">
-            <button id="scheduleButton" class="sidebar-button" onclick="navigateToSchedule()">Schedule Appointment</button>
-            <button id="cancelButton" class="sidebar-button" onclick="navigateToCancel()" disabled>Cancel Appointment</button>
-        </div>
-
-        <div class="content">
-            <header class="header-container">
-                <h1>Appointment Management</h1>
-            </header>
-            <div id="dynamicContent">
-                <p>Loading your appointments...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="successMessage" class="success-message" style="display: none;">
-        <p id="successText"></p>
-    </div>
-
-    
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f4f8;
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
         .container {
             display: flex;
-            flex-wrap: wrap;
-            min-height: 100vh;
-        }
-
-        .header-container {
             width: 100%;
-            text-align: center;
-            margin-bottom: 20px;
+            overflow: hidden;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
         }
 
-        h1 {
-            background-color: #6b5b95;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 1.8em;
-        }
-
-        
         .sidebar {
             flex: 1 1 300px;
             background-color: #6b5b95;
@@ -88,34 +52,68 @@
             background-color: #6b46c1;
         }
 
-        
         .content {
             flex: 2 1 600px;
             padding: 20px;
             background-color: white;
-            max-width: 800px;
-            margin: 0 auto;
+            overflow-y: auto;  
+            height: calc(100vh - 60px); 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            position: sticky; 
+            top: 0;
+            background-color: white;
+            z-index: 10; 
+        }
+
+        h1 {
+            background-color: #e712c4;
+            /* background-color: #6b5b95; */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1.8em;
         }
 
         .appointment {
-            background-color: #f9f9f9;
+            /* background-color: #d5b0cf; */
+            background-color: #e0f7fa;
             padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .appointment:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .appointment-title {
             font-weight: bold;
-            color: #333;
+            color: #e712c4; 
+            font-size: 1.2em;
+            margin-bottom: 10px;
         }
 
         .appointment-details {
-            margin-top: 5px;
-            font-size: 0.9em;
+            font-size: 1em;
             color: #555;
+            margin-bottom: 8px;
         }
 
+        .appointment-details span {
+            font-weight: bold;
+        }
 
         .success-message {
             position: fixed;
@@ -130,7 +128,6 @@
             font-size: 0.9em;
         }
 
-               
         .green {
             color: green;
             font-weight: bold;
@@ -146,67 +143,82 @@
             font-style: italic;
         }
 
-
-
-            
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            h1 {
-                font-size: 1.6em;
-                padding: 10px 15px;
-            }
-
-            .sidebar-button {
-                font-size: 1em;
-                padding: 8px 12px;
-            }
-
-            .content p {
-                font-size: 0.9em;
-            }
-        }
-
+        /* Media Queries for Responsiveness */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                overflow: auto;
             }
 
             .sidebar {
+                flex: 0 0 auto; /* Sidebar takes full width on smaller screens */
                 width: 100%;
+                box-shadow: none;
             }
 
             .content {
+                flex: 1 1 auto;
                 width: 100%;
-                padding: 15px;
-            }
-
-            .sidebar-button {
-                font-size: 1em;
-                padding: 10px 15px;
+                height: auto; /* Allow content to expand naturally */
+                overflow-y: scroll; /* Enable scrolling for appointment list */
             }
 
             h1 {
-                font-size: 1.4em;
+                font-size: 1.5em; /* Adjust header font size for smaller screens */
+            }
+
+            .appointment-title {
+                font-size: 1.1em; /* Adjust appointment title size for smaller screens */
+            }
+
+            .appointment-details {
+                font-size: 0.9em; /* Adjust font size for appointment details */
+            }
+
+            .sidebar-button {
+                width: 100%; /* Make buttons take full width on small screens */
             }
         }
 
         @media (max-width: 480px) {
-            .sidebar-button {
-                font-size: 0.9em;
-                padding: 8px 10px;
-            }
-
             h1 {
-                font-size: 1.2em;
-                padding: 8px 10px;
+                font-size: 1.2em; /* Even smaller font size for very small screens */
             }
 
-            .content p {
-                font-size: 0.85em;
+            .appointment-title {
+                font-size: 1em;
+            }
+
+            .appointment-details {
+                font-size: 0.8em; /* Further adjustment for very small screens */
             }
         }
     </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button id="scheduleButton" class="sidebar-button" onclick="navigateToSchedule()">Schedule Appointment</button>
+            <button id="cancelButton" class="sidebar-button" onclick="navigateToCancel()" disabled>Cancel Appointment</button>
+        </div>
+
+       
+        <div class="content">
+           
+            <header class="header-container">
+                <h1>Appointment Management</h1>
+            </header>
+           
+            <div id="dynamicContent">
+                <p>Loading your appointments...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="successMessage" class="success-message" style="display: none;">
+        <p id="successText"></p>
+    </div>
 
     <script>
         function getPatientId() {
@@ -232,367 +244,65 @@
             }
         }
 
-        // function fetchAppointments() {
-        //     const patientId = getPatientId();
-        //     if (patientId) {
-        //         fetch(``http://localhost:8080/patient/${patientId}/appointments``)
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 const contentDiv = document.getElementById('dynamicContent');
-        //                 const cancelButton = document.getElementById('cancelButton');
-
-        //                 if (data.length === 0) {
-        //                     contentDiv.innerHTML = '<p>You have no appointments scheduled.</p>';
-        //                 } else {
-        //                     contentDiv.innerHTML = '<p>Your appointments:</p>';
-        //                     data.forEach(appointment => {
-        //                         const appointmentDiv = document.createElement('div');
-        //                         appointmentDiv.className = 'appointment';
-
-        //                         appointmentDiv.innerHTML = `
-        //                             <div class="appointment-title">Appointment ID: ${appointment.appointmentId}</div>
-        //                             <div class="appointment-details">
-        //                                 <p>Date: ${appointment.appointmentDate}</p>
-        //                                 <p>Time: ${appointment.appointmentTime}</p>
-        //                                 <p>Reason: ${appointment.reason}</p>
-        //                             </div>
-        //                         `;
-        //                         contentDiv.appendChild(appointmentDiv);
-        //                     });
-        //                     cancelButton.disabled = false;
-        //                 }
-        //             })
-        //             .catch(error => console.error('Error fetching appointments:', error));
-        //     } else {
-        //         alert('Patient ID is missing');
-        //     }
-        // }
-
-
-
-        function fetchAppointments() {
-    const patientId = getPatientId();
-    if (patientId) {
-        fetch(`http://localhost:8080/patient/${patientId}/appointments`) 
-            .then(response => response.json())  
-            .then(data => {
-                const contentDiv = document.getElementById('dynamicContent');
-                const cancelButton = document.getElementById('cancelButton');
-
-                if (data.length === 0) {
-                    contentDiv.innerHTML = '<p>You have no appointments scheduled.</p>';
-                } else {
-                    contentDiv.innerHTML = '<p>Your appointments:</p>';
-                    data.forEach(appointment => {
-                        const appointmentDiv = document.createElement('div');
-                        appointmentDiv.className = 'appointment';
-
-                        appointmentDiv.innerHTML = `
-                            <div class="appointment-title">Appointment ID: ${appointment.appointmentId}</div>
-                            <div class="appointment-details">
-                                <p>Date: ${appointment.appointmentDate}</p>
-                                <p>Time: ${appointment.appointmentTime}</p>
-                                <p>Reason: ${appointment.reason}</p>
-                                <p class="${appointment.status === 'Scheduled' ? 'green' : appointment.status === 'Cancelled' ? 'red' : 'blue'}">
-                                Status: ${appointment.status}
-                                </p>
-                            </div>
-                        `;
-                        contentDiv.appendChild(appointmentDiv);
-                    });
-                    cancelButton.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching appointments:', error);
-                const contentDiv = document.getElementById('dynamicContent');
-                contentDiv.innerHTML = '<p>There was an error loading your appointments. Please try again later.</p>';
-            });
-    } else {
-        alert('Patient ID is missing');
-    }
-}
-
-
-
-        
-
         function showSuccessMessage(message) {
             const successMessage = document.getElementById('successMessage');
             const successText = document.getElementById('successText');
-            successText.textContent = message;
+            successText.innerText = message;
             successMessage.style.display = 'block';
-
             setTimeout(() => {
                 successMessage.style.display = 'none';
             }, 3000);
         }
 
-        window.onload = fetchAppointments;
+        window.onload = async function() {
+            const patientId = getPatientId();
+            if (patientId) {
+                try {
+                    const response = await fetch(`http://localhost:8080/patient/${patientId}/appointments`);
+                    const appointments = await response.json();
+
+                    const dynamicContent = document.getElementById('dynamicContent');
+                    if (appointments && appointments.length > 0) {
+                        dynamicContent.innerHTML = '';
+                        appointments.forEach(appointment => {
+                            const div = document.createElement('div');
+                            div.classList.add('appointment');
+                            div.innerHTML = `
+                                <div class="appointment-title">${appointment.appointmentDate} - ${appointment.appointmentTime}</div>
+                                <div class="appointment-details">
+                                    <span>Status:</span> <span class="${appointment.status === 'Cancelled' ? 'red' : 'green'}">${appointment.status}</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <span>Appointment ID:</span> ${appointment.appointmentId}
+                                </div>
+                                <div class="appointment-details">
+                                    <span>Doctor ID:</span> ${appointment.doctorId}
+                                </div>
+                                <div class="appointment-details">
+                                    <span>Reason:</span> ${appointment.reason || 'N/A'}
+                                </div>
+                                ${appointment.status === 'Cancelled' ? ` 
+                                <div class="appointment-details">
+                                    <span>Cancellation Reason:</span> ${appointment.reasonOfCancellation || 'N/A'}
+                                </div>
+                            ` : ''}`;
+                            dynamicContent.appendChild(div);
+                        });
+                    } else {
+                        dynamicContent.innerHTML = 'No appointments found.';
+                    }
+
+                    if (appointments.some(appointment => appointment.status === 'Scheduled')) {
+                        document.getElementById('cancelButton').disabled = false;
+                    }
+
+                } catch (error) {
+                    const dynamicContent = document.getElementById('dynamicContent');
+                    dynamicContent.innerHTML = 'Error loading appointments.';
+                }
+            }
+        };
     </script>
 </body>
 </html>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Management</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-    <div class="container">
-       
-        <div class="sidebar">
-           
-            <button id="scheduleButton" class="sidebar-button" onclick="navigateToSchedule()">Schedule Appointment</button>
-            <button id="cancelButton" class="sidebar-button" onclick="navigateToCancel()" disabled>Cancel Appointment</button>
-        </div>
-
-      
-        <div class="content">
-            <header class="header-container">
-                <h1>Appointment Management</h1>
-            </header>
-            <div id="dynamicContent">
-                <p>Loading your appointments...</p>
-            </div>
-        </div>
-    </div>
-
-    
-    <div id="successMessage" class="success-message" style="display: none;">
-        <p id="successText"></p>
-    </div>
-
-    <style>
-        /* General Styling */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f4f8;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            min-height: 100vh;
-        }
-
-        .header-container {
-            width: 100%;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            background-color: #6b5b95;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 1.8em;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            flex: 1 1 300px;
-            background-color: #6b5b95;
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-button {
-            background-color: #805ad5;
-            color: white;
-            font-size: 1.1em;
-            padding: 10px 15px;
-            margin: 10px 0;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            width: 90%;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-button:hover {
-            background-color: #6b46c1;
-        }
-
-        /* Content Section Styling */
-        .content {
-            flex: 2 1 600px;
-            padding: 20px;
-            background-color: white;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .content p {
-            font-size: 1em;
-            color: #333;
-        }
-
-        /* Success Message Notification */
-        .success-message {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            font-size: 0.9em;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            h1 {
-                font-size: 1.6em;
-                padding: 10px 15px;
-            }
-
-            .sidebar-button {
-                font-size: 1em;
-                padding: 8px 12px;
-            }
-
-            .content p {
-                font-size: 0.9em;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .content {
-                width: 100%;
-                padding: 15px;
-            }
-
-            .sidebar-button {
-                font-size: 1em;
-                padding: 10px 15px;
-            }
-
-            h1 {
-                font-size: 1.4em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar-button {
-                font-size: 0.9em;
-                padding: 8px 10px;
-            }
-
-            h1 {
-                font-size: 1.2em;
-                padding: 8px 10px;
-            }
-
-            .content p {
-                font-size: 0.85em;
-            }
-        }
-    </style>
-
-    <script>
-        // Dynamic navigation functions
-        function getPatientId() {
-            // Fetch patientId dynamically from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('patientId'); // Assuming the patientId is passed as a query parameter
-        }
-
-        function navigateToSchedule() {
-            const patientId = getPatientId();
-            if(patientId) {
-                window.location.href = `/patient/${patientId}/appointments/schedule`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        function navigateToCancel() {
-            const patientId = getPatientId();
-            if(patientId) {
-                window.location.href = `/patient/${patientId}/appointments/cancel`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        // Function to fetch appointments and update UI
-        function fetchAppointments() {
-            const patientId = getPatientId();
-            if(patientId) {
-                fetch(`/patient/${patientId}/appointments`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const contentDiv = document.getElementById('dynamicContent');
-                        const cancelButton = document.getElementById('cancelButton');
-
-                        if (data.length === 0) {
-                            contentDiv.innerHTML = '<p>You have no appointments scheduled.</p>';
-                        } else {
-                            contentDiv.innerHTML = '<p>Your appointments:</p><ul>';
-                            data.forEach(appointment => {
-                                contentDiv.innerHTML += `<li>Appointment with Dr. ${appointment.doctorName}, Date: ${appointment.date}</li>`;
-                            });
-                            contentDiv.innerHTML += '</ul>';
-                            cancelButton.disabled = false; // Enable cancel button if there are appointments
-                        }
-                    })
-                    .catch(error => console.error('Error fetching appointments:', error));
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        // Function to display success messages dynamically
-        function showSuccessMessage(message) {
-            const successMessage = document.getElementById('successMessage');
-            const successText = document.getElementById('successText');
-            successText.textContent = message;
-            successMessage.style.display = 'block';
-
-            // Hide the message after 3 seconds
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 3000);
-        }
-
-        // Fetch appointments when the page loads
-        window.onload = fetchAppointments;
-    </script>
-</body>
-</html> -->
