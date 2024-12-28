@@ -6,6 +6,13 @@ public class AppointmentDTO {
     private String appointmentDate;
     private String appointmentTime;
     private String status;
+    public Long getDoctorId() {
+        return doctorId;
+    }
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
+    }
+    private Long doctorId;
     public Long getAppointmentId() {
         return appointmentId;
     }

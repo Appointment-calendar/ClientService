@@ -12,6 +12,9 @@ public class CancelAppointmentDTO {
         return reasonOfCancellation;
     }
 
+    public CancelAppointmentDTO() {
+    }
+
     public void setReasonOfCancellation(String reasonOfCancellation) {
         this.reasonOfCancellation = reasonOfCancellation;
     }
@@ -23,5 +26,11 @@ public class CancelAppointmentDTO {
     public void setAppointmentId(Long appointmentId) {
         this.appointmentId = appointmentId;
     }
+
+    public CancelAppointmentDTO(Long appointmentId, String reasonOfCancellation) {
+        this.appointmentId = appointmentId;
+        this.reasonOfCancellation = reasonOfCancellation;
+    }
+    
 
 }

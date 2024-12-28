@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Appointment</title>
-    <!-- <link rel="stylesheet" href="/css/style.css"> -->
 </head>
 <body>
     <div class="container">
@@ -13,7 +12,6 @@
             <button id="backButton" class="sidebar-button">Back to Management</button>
         </div>
 
-        
         <div class="content">
             <h2>Schedule Appointment</h2>
             <form id="appointmentForm" th:action="@{/patient/{patientId}/appointments/schedule(patientId=${patientId})}" method="post" onsubmit="return submitForm(event)">
@@ -27,24 +25,15 @@
                     <input type="text" id="reason" name="reason" placeholder="Enter reason" required />
                 </div>
 
-                <!-- <div class="form-group">
-                    <label for="doctorId">Select Doctor:</label>
-                    <select id="doctorId" name="doctorId" required>
-                        <option value="" disabled selected>Select a doctor</option>
-                        <th:block th:each="doctor : ${doctors}">
-                            <option th:value="${doctor.id}" th:text="${doctor.name}"></option>
-                        </th:block>
-                    </select>
-                </div> -->
+                <!-- Hidden input to store doctorId -->
+                <input type="hidden" id="doctorId" name="doctorId" /> <!-- Hidden field to store doctorId -->
 
-				<div class="form-group">
-					<label for="doctorId">Select Doctor:</label>
-					<select id="doctorId" name="doctorId" required>
-						<option value="" disabled selected>Select a doctor</option>
-						<!-- Options will be added dynamically using javascript  -->
-					</select>
-				</div>
-				
+                <div class="form-group">
+                    <label for="doctorSelect">Select Doctor:</label>
+                    <select id="doctorSelect" name="doctorSelect" required>
+                        <option value="" disabled selected>Select a doctor</option>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <label for="appointmentDate">Appointment Date:</label>
@@ -56,7 +45,8 @@
                     <input type="time" id="appointmentTime" name="appointmentTime" required />
                 </div>
 
-                <input type="hidden" name="status" value="pending" />
+                <input type="hidden" name="status" value="Scheduled" />  <!-- Default to Scheduled -->
+                <input type="hidden" name="reasonOfCancellation" value="null" /> <!-- Default to null -->
 
                 <button type="submit" class="submit-button">Book Appointment</button>
             </form>
@@ -64,58 +54,44 @@
     </div>
 
     <script>
-        // Function to get patientId from the URL query parameters
-
-		// function getPatientId() {
-        //     // Fetch patientId dynamically from URL
-        //     const urlParams = new URLSearchParams(window.location.search);
-        //     return urlParams.get('patientId'); // Assuming the patientId is passed as a query parameter
-        // }
-
-		function getPatientId() {
-			// Extract patientId from the URL path
-			const pathParts = window.location.pathname.split('/'); // Split the URL path into parts
-			return pathParts[2]; // Assuming the patientId is the second segment (index 2) of the path
-		}
+        function getPatientId() {
+            const pathParts = window.location.pathname.split('/'); 
+            return pathParts[2]; // Assuming the patientId is the second segment (index 2) of the path
+        }
 
         // Redirect to the appointment list for the specific patient when the back button is clicked
         document.getElementById('backButton').onclick = function() {
             const patientId = getPatientId();
             if(patientId) {
                 window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`;
-
             } else {
                 alert('Patient ID is missing');
             }
         };
 
-        // Function to handle form submission and redirect after successful booking
-        // function submitForm(event) {
-        //     event.preventDefault(); // Prevent the default form submission
-
-        //     const form = document.getElementById('appointmentForm');
-        //     const patientId = getPatientId();
-
-        //     // Simulate form submission (e.g., using AJAX or fetch here)
-        //     setTimeout(function() {
-        //         // After a successful form submission, redirect to the patient's appointments page
-        //         window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`; // Redirect to the correct page
-        //     }, 500); // Slight delay to simulate form submission
-        // }
-
 
         function submitForm(event) {
-       event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); // Prevent the default form submission
 
     const form = document.getElementById('appointmentForm');
     const patientId = getPatientId();
-    
+
     // Get form data
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
+    // Ensure doctorId is selected before submitting the form
+    const doctorId = document.getElementById('doctorId').value;
+    if (!doctorId) {
+        alert("Please select a doctor.");
+        return false; // Prevent submission
+    }
+
+    // Update doctorId in the form data
+    data.doctorId = doctorId;
+
     // Send data to backend using fetch
-    fetch(`http://localhost:8081/patient/${patientId}/appointments/schedule`, {
+    fetch(`http://localhost:8080/patient/${patientId}/appointments/schedule`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -131,43 +107,43 @@
     .catch(error => {
         // Handle error
         console.error('Error scheduling appointment:', error);
-        alert('Failed to schedule appointment');
+        alert('Selected time slot is not available please select other time slot');
     });
 }
 
 
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("http://localhost:8080/api/doctors")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch doctors");
+                    }
+                    return response.json();
+                })
+                .then(doctors => {
+                    const doctorSelect = document.getElementById("doctorSelect");
+                    doctors.forEach(doctor => {
+                        const option = document.createElement("option");
+                        option.value = doctor.id; // Ensure doctor id is set as value
+                        option.textContent = doctor.name;
+                        doctorSelect.appendChild(option);
+                    });
 
-
-		
-    document.addEventListener("DOMContentLoaded", () => {
-        fetch("http://localhost:8080/api/doctors")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch doctors");
-                }
-                return response.json();
-            })
-            .then(doctors => {
-                const doctorSelect = document.getElementById("doctorId");
-                doctors.forEach(doctor => {
+                    // Add event listener to update doctorId when a doctor is selected
+                    doctorSelect.addEventListener('change', function() {
+                        const selectedDoctorId = doctorSelect.value;
+                        document.getElementById('doctorId').value = selectedDoctorId; // Update hidden input with selected doctorId
+                    });
+                })
+                .catch(error => {
+                    const doctorSelect = document.getElementById("doctorSelect");
                     const option = document.createElement("option");
-                    option.value = doctor.id;
-                    option.textContent = doctor.name;
+                    option.value = "";
+                    option.textContent = "Unable to load doctors";
+                    option.disabled = true;
                     doctorSelect.appendChild(option);
                 });
-            })
-            .catch(error => {
-    const doctorSelect = document.getElementById("doctorId");
-    const option = document.createElement("option");
-    option.value = "";
-    option.textContent = "Unable to load doctors";
-    option.disabled = true;
-    doctorSelect.appendChild(option);
-});
-
-    });
-
-
+        });
     </script>
 
     <style>
@@ -316,4 +292,3 @@
     </style>
 </body>
 </html>
-
