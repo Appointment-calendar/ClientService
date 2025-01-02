@@ -213,7 +213,7 @@
 		<div class="sidebar">
 			<button id="scheduleButton" class="sidebar-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/schedule'|">Schedule
 				Appointment</button>
-			<button id="cancelButton" class="sidebar-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/cancel'|">Cancel
+			<button id="cancelButton" class="sidebar-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/cancel'|" th:disabled="${appointments == null or appointments.isEmpty()}">Cancel
 				Appointment</button>
 		</div>
 

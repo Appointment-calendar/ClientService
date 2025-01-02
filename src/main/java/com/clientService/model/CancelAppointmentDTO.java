@@ -1,23 +1,23 @@
 package com.clientService.model;
 
 public class CancelAppointmentDTO {
-    private int appointmentId;
+    private Integer appointmentId;
     private String reasonOfCancellation;
     
 	public CancelAppointmentDTO() {
 		//TODO
 	}
 
-	public CancelAppointmentDTO(int appointmentId, String reasonOfCancellation) {
+	public CancelAppointmentDTO(Integer appointmentId, String reasonOfCancellation) {
 		this.appointmentId = appointmentId;
 		this.reasonOfCancellation = reasonOfCancellation;
 	}
 
-	public int getAppointmentId() {
+	public Integer getAppointmentId() {
 		return appointmentId;
 	}
 
-	public void setAppointmentId(int appointmentId) {
+	public void setAppointmentId(Integer appointmentId) {
 		this.appointmentId = appointmentId;
 	}
 
@@ -28,10 +28,5 @@ public class CancelAppointmentDTO {
 	public void setReasonOfCancellation(String reasonOfCancellation) {
 		this.reasonOfCancellation = reasonOfCancellation;
 	}
-
-    
-
-    
-    
 
 }
