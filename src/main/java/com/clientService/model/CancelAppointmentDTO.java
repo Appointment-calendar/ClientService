@@ -1,36 +1,37 @@
 package com.clientService.model;
 
 public class CancelAppointmentDTO {
-    private Long appointmentId;
+    private int appointmentId;
     private String reasonOfCancellation;
+    
+	public CancelAppointmentDTO() {
+		//TODO
+	}
 
-    public CancelAppointmentDTO(Long appointmentId) {
-        this.appointmentId = appointmentId;
-    }
+	public CancelAppointmentDTO(int appointmentId, String reasonOfCancellation) {
+		this.appointmentId = appointmentId;
+		this.reasonOfCancellation = reasonOfCancellation;
+	}
 
-    public String getReasonOfCancellation() {
-        return reasonOfCancellation;
-    }
+	public int getAppointmentId() {
+		return appointmentId;
+	}
 
-    public CancelAppointmentDTO() {
-    }
+	public void setAppointmentId(int appointmentId) {
+		this.appointmentId = appointmentId;
+	}
 
-    public void setReasonOfCancellation(String reasonOfCancellation) {
-        this.reasonOfCancellation = reasonOfCancellation;
-    }
+	public String getReasonOfCancellation() {
+		return reasonOfCancellation;
+	}
 
-    public Long getAppointmentId() {
-        return appointmentId;
-    }
+	public void setReasonOfCancellation(String reasonOfCancellation) {
+		this.reasonOfCancellation = reasonOfCancellation;
+	}
 
-    public void setAppointmentId(Long appointmentId) {
-        this.appointmentId = appointmentId;
-    }
+    
 
-    public CancelAppointmentDTO(Long appointmentId, String reasonOfCancellation) {
-        this.appointmentId = appointmentId;
-        this.reasonOfCancellation = reasonOfCancellation;
-    }
+    
     
 
 }

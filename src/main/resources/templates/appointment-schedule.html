@@ -9,12 +9,12 @@
     <div class="container">
         
         <div class="sidebar">
-            <button id="backButton" class="sidebar-button">Back to Management</button>
+            <button id="backButton" class="sidebar-button" th:onclick="|window.location.href='/patient/${patientId}/appointments'|">Back to Management</button>
         </div>
 
         <div class="content">
             <h2>Schedule Appointment</h2>
-            <form id="appointmentForm" th:action="@{/patient/{patientId}/appointments/schedule(patientId=${patientId})}" method="post" onsubmit="return submitForm(event)">
+            <form id="appointmentForm" th:action="@{/patient/{patientId}/appointments/schedule(patientId=${patientId})}" th:object="${scheduleAppointmentDTO}" method="post">
                 <div class="form-group">
                     <label for="patientId">Patient ID:</label>
                     <input type="number" id="patientId" name="patientId" th:value="${patientId}" readonly />
@@ -22,129 +22,39 @@
 
                 <div class="form-group">
                     <label for="reason">Reason for Appointment:</label>
-                    <input type="text" id="reason" name="reason" placeholder="Enter reason" required />
+                    <input type="text" id="reason" name="reason" th:field="*{reason}" placeholder="Enter reason" required />
                 </div>
 
                 <!-- Hidden input to store doctorId -->
-                <input type="hidden" id="doctorId" name="doctorId" /> <!-- Hidden field to store doctorId -->
+                <!-- <input type="hidden" id="doctorId" name="doctorId" />  Hidden field to store doctorId -->
 
                 <div class="form-group">
                     <label for="doctorSelect">Select Doctor:</label>
-                    <select id="doctorSelect" name="doctorSelect" required>
+                    <select id="doctorSelect" name="doctorId" th:field="*{doctorId}" required>
                         <option value="" disabled selected>Select a doctor</option>
+						<option th:each="doctor : ${doctors}" 
+						                th:value="${doctor.id}" 
+						                th:text="${doctor.name}">Doctor</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="appointmentDate">Appointment Date:</label>
-                    <input type="date" id="appointmentDate" name="appointmentDate" required />
+                    <input type="date" id="appointmentDate" name="appointmentDate" th:field="*{appointmentDate}" required />
                 </div>
 
                 <div class="form-group">
                     <label for="appointmentTime">Appointment Time:</label>
-                    <input type="time" id="appointmentTime" name="appointmentTime" required />
+                    <input type="time" id="appointmentTime" name="appointmentTime" th:field="*{appointmentTime}" required />
                 </div>
 
-                <input type="hidden" name="status" value="Scheduled" />  <!-- Default to Scheduled -->
-                <input type="hidden" name="reasonOfCancellation" value="null" /> <!-- Default to null -->
+                <!-- <input type="hidden" name="status" th:field="*{status}" th:value="Scheduled" />   Default to Scheduled -->
+                <!-- <input type="hidden" name="reasonOfCancellation" th:field="*{reasonOfCancellation}" /> Default to null -->
 
                 <button type="submit" class="submit-button">Book Appointment</button>
             </form>
         </div>
     </div>
-
-    <script>
-        function getPatientId() {
-            const pathParts = window.location.pathname.split('/'); 
-            return pathParts[2]; // Assuming the patientId is the second segment (index 2) of the path
-        }
-
-        // Redirect to the appointment list for the specific patient when the back button is clicked
-        document.getElementById('backButton').onclick = function() {
-            const patientId = getPatientId();
-            if(patientId) {
-                window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        };
-
-
-        function submitForm(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    const form = document.getElementById('appointmentForm');
-    const patientId = getPatientId();
-
-    // Get form data
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    // Ensure doctorId is selected before submitting the form
-    const doctorId = document.getElementById('doctorId').value;
-    if (!doctorId) {
-        alert("Please select a doctor.");
-        return false; // Prevent submission
-    }
-
-    // Update doctorId in the form data
-    data.doctorId = doctorId;
-
-    // Send data to backend using fetch
-    fetch(`http://localhost:8080/patient/${patientId}/appointments/schedule`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data), // Convert form data to JSON
-    })
-    .then(response => response.json())
-    .then(result => {
-        // Handle success response
-        alert('Appointment scheduled successfully');
-        window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`; // Redirect to appointments page
-    })
-    .catch(error => {
-        // Handle error
-        console.error('Error scheduling appointment:', error);
-        alert('Selected time slot is not available please select other time slot');
-    });
-}
-
-
-        document.addEventListener("DOMContentLoaded", () => {
-            fetch("http://localhost:8080/api/doctors")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch doctors");
-                    }
-                    return response.json();
-                })
-                .then(doctors => {
-                    const doctorSelect = document.getElementById("doctorSelect");
-                    doctors.forEach(doctor => {
-                        const option = document.createElement("option");
-                        option.value = doctor.id; // Ensure doctor id is set as value
-                        option.textContent = doctor.name;
-                        doctorSelect.appendChild(option);
-                    });
-
-                    // Add event listener to update doctorId when a doctor is selected
-                    doctorSelect.addEventListener('change', function() {
-                        const selectedDoctorId = doctorSelect.value;
-                        document.getElementById('doctorId').value = selectedDoctorId; // Update hidden input with selected doctorId
-                    });
-                })
-                .catch(error => {
-                    const doctorSelect = document.getElementById("doctorSelect");
-                    const option = document.createElement("option");
-                    option.value = "";
-                    option.textContent = "Unable to load doctors";
-                    option.disabled = true;
-                    doctorSelect.appendChild(option);
-                });
-        });
-    </script>
 
     <style>
         /* General Styling */

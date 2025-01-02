@@ -6,13 +6,28 @@ public class AppointmentDTO {
     private String appointmentDate;
     private String appointmentTime;
     private String status;
-    public Long getDoctorId() {
+    private Long doctorId;
+    private String reason;
+    private String reasonOfCancellation;
+    public String getReason() {
+		return reason;
+	}
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+	public String getReasonOfCancellation() {
+		return reasonOfCancellation;
+	}
+	public void setReasonOfCancellation(String reasonOfCancellation) {
+		this.reasonOfCancellation = reasonOfCancellation;
+	}
+	public Long getDoctorId() {
         return doctorId;
     }
     public void setDoctorId(Long doctorId) {
         this.doctorId = doctorId;
     }
-    private Long doctorId;
+    
     public Long getAppointmentId() {
         return appointmentId;
     }
