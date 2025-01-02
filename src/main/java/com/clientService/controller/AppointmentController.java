@@ -2,14 +2,23 @@ package com.clientService.controller;
 
 import com.clientService.model.AppointmentDTO;
 import com.clientService.model.CancelAppointmentDTO;
+import com.clientService.model.DoctorDTO;
 import com.clientService.model.ScheduleAppointmentDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/patient")
@@ -20,20 +29,26 @@ public class AppointmentController {
 
     @GetMapping("/{patientId}/appointments")
     public String showAppointmentsForPatient(@PathVariable Long patientId, Model model) {
+        String url = "http://localhost:8080/patient/" + patientId + "/appointments";
         try {
-            String url = "http://localhost:8080/patient/" + patientId + "/appointments";
-            AppointmentDTO[] appointments = restTemplate.getForObject(url, AppointmentDTO[].class);
+            ResponseEntity<List<AppointmentDTO>> response = restTemplate.exchange(
+                url, 
+                HttpMethod.GET, 
+                null, 
+                new ParameterizedTypeReference<List<AppointmentDTO>>() {}
+            );
+            List<AppointmentDTO> appointments = response.getBody();
 
-            if (appointments == null || appointments.length == 0) {
+            if (appointments == null || appointments.isEmpty()) {
                 model.addAttribute("message", "No appointments found.");
             } else {
+            	model.addAttribute("patientId", patientId);
                 model.addAttribute("appointments", appointments);
             }
-
-            return "appointments"; // Thymeleaf template for displaying appointments
+            return "appointments";
         } catch (ResourceAccessException e) {
             model.addAttribute("errorMessage", "Unable to fetch appointments. Please check the backend service.");
-            return "error"; // Error page template
+            return "error";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "An unexpected error occurred while fetching appointments.");
             return "error";
@@ -42,18 +57,54 @@ public class AppointmentController {
 
     @GetMapping("/{patientId}/appointments/schedule")
     public String showScheduleAppointment(@PathVariable Long patientId, Model model) {
-        model.addAttribute("scheduleAppointmentDTO", new ScheduleAppointmentDTO());
-        model.addAttribute("patientId", patientId);
+    	String url = "http://localhost:8080/api/doctors";
+        try {
+            // Make GET request to fetch doctors
+            ResponseEntity<List<DoctorDTO>> response = restTemplate.exchange(
+                url, 
+                HttpMethod.GET, 
+                null, 
+                new ParameterizedTypeReference<List<DoctorDTO>>() {}
+            );
+            
+            // Get the list of doctors from the response
+            List<DoctorDTO> doctors = response.getBody();
+
+            // Add attributes to the model
+            model.addAttribute("scheduleAppointmentDTO", new ScheduleAppointmentDTO());
+            model.addAttribute("patientId", patientId);
+            model.addAttribute("doctors", doctors); // Add the list of doctors to the model
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to fetch doctors. Please try again.");
+            return "error";
+        }
+        
+        // Return the view
         return "appointment-schedule";
     }
 
     @PostMapping("/{patientId}/appointments/schedule")
-    public String scheduleAppointment(@PathVariable Long patientId, @ModelAttribute ScheduleAppointmentDTO scheduleAppointmentDTO, Model model) {
+    public String scheduleAppointment(@PathVariable Long patientId, 
+                                       @ModelAttribute ScheduleAppointmentDTO scheduleAppointmentDTO, 
+                                       Model model) {
+        String url = "http://localhost:8080/patient/" + patientId + "/appointments/schedule";
         try {
-            String url = "http://localhost:8080/patient/" + patientId + "/appointments/schedule";
-            AppointmentDTO createdAppointment = restTemplate.postForObject(url, scheduleAppointmentDTO, AppointmentDTO.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            HttpEntity<ScheduleAppointmentDTO> request = new HttpEntity<>(scheduleAppointmentDTO, headers);
+
+            ResponseEntity<AppointmentDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                AppointmentDTO.class
+            );
+
+            AppointmentDTO createdAppointment = response.getBody();
 
             if (createdAppointment != null) {
+            	model.addAttribute("patientId", patientId);
                 model.addAttribute("appointment", createdAppointment);
                 return "appointment-confirmation";
             } else {
@@ -77,10 +128,23 @@ public class AppointmentController {
     }
 
     @PostMapping("/{patientId}/appointments/cancel")
-    public String cancelAppointment(@PathVariable Long patientId, @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, Model model) {
+    public String cancelAppointment(@PathVariable Long patientId, 
+                                     @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, 
+                                     Model model) {
+        String url = "http://localhost:8080/patient/" + patientId + "/appointments/cancel";
         try {
-            String url = "http://localhost:8080/patient/" + patientId + "/appointments/cancel";
-            AppointmentDTO cancelledAppointment = restTemplate.postForObject(url, cancelAppointmentDTO, AppointmentDTO.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            HttpEntity<CancelAppointmentDTO> request = new HttpEntity<>(cancelAppointmentDTO, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                String.class
+            );
+
+            String cancelledAppointment = response.getBody();
 
             if (cancelledAppointment != null) {
                 model.addAttribute("appointment", cancelledAppointment);
@@ -98,4 +162,3 @@ public class AppointmentController {
         }
     }
 }
-

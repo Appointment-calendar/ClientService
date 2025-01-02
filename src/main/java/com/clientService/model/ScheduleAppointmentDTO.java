@@ -3,13 +3,22 @@ package com.clientService.model;
 public class ScheduleAppointmentDTO {
     private int patientId;
     private String reason;
-    private int doctorId;
+    private Integer doctorId;
     private String appointmentDate;
     private String appointmentTime;
-    private String status;
+    private String status = "Scheduled";
+    private String reasonOfCancellation = null;
 
     
-    public int getPatientId() {
+    public String getReasonOfCancellation() {
+		return reasonOfCancellation;
+	}
+
+	public void setReasonOfCancellation(String reasonOfCancellation) {
+		this.reasonOfCancellation = reasonOfCancellation;
+	}
+
+	public int getPatientId() {
         return patientId;
     }
 
@@ -25,15 +34,17 @@ public class ScheduleAppointmentDTO {
         this.reason = reason;
     }
 
-    public int getDoctorId() {
-        return doctorId;
-    }
+    
 
-    public void setDoctorId(int doctorId) {
-        this.doctorId = doctorId;
-    }
+    public Integer getDoctorId() {
+		return doctorId;
+	}
 
-    public String getAppointmentDate() {
+	public void setDoctorId(Integer doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	public String getAppointmentDate() {
         return appointmentDate;
     }
 
