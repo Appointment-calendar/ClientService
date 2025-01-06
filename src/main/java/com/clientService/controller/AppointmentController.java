@@ -18,7 +18,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/patient")
@@ -127,38 +129,167 @@ public class AppointmentController {
         return "appointment-cancel";
     }
 
-    @PostMapping("/{patientId}/appointments/cancel")
-    public String cancelAppointment(@PathVariable Long patientId, 
-                                     @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, 
-                                     Model model) {
-        String url = "http://localhost:8080/patient/" + patientId + "/appointments/cancel";
+
+    @GetMapping("/{patientId}/appointments/cancel/{appointmentId}")
+    public String showCancelAppointment(@PathVariable Long patientId, 
+                                         @PathVariable Long appointmentId, 
+                                         Model model) {
+        CancelAppointmentDTO cancelAppointmentDTO = new CancelAppointmentDTO();
+        cancelAppointmentDTO.setAppointmentId(appointmentId); // Pre-fill the appointment ID
+        model.addAttribute("cancelAppointmentDTO", cancelAppointmentDTO);
+        model.addAttribute("patientId", patientId);
+        return "appointment-cancel";
+    }
+
+    // @PostMapping("/{patientId}/appointments/cancel/{appointmentId}")
+    // public String cancelAppointment(@PathVariable Long patientId, 
+    //                                  @PathVariable Long appointmentId, 
+    //                                  @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, 
+    //                                  Model model) {
+    //     String url = "http://localhost:8081/patient/" + patientId + "/appointments/cancel/" + appointmentId;
+    //     try {
+    //         HttpHeaders headers = new HttpHeaders();
+    //         headers.set("Content-Type", "application/json");
+    //         HttpEntity<CancelAppointmentDTO> request = new HttpEntity<>(cancelAppointmentDTO, headers);
+
+    //         ResponseEntity<String> response = restTemplate.exchange(
+    //             url,
+    //             HttpMethod.POST,
+    //             request,
+    //             String.class
+    //         );
+
+    //         if (response.getStatusCode().is2xxSuccessful()) {
+    //             return "appointment-cancel-confirmation";
+    //         } else {
+    //             model.addAttribute("errorMessage", "Cancellation failed. Please try again.");
+    //             return "appointment-cancel";
+    //         }
+    //     } catch (HttpClientErrorException e) {
+    //         model.addAttribute("errorMessage", "Invalid input. Please check the cancellation details.");
+    //         return "appointment-cancel";
+    //     } catch (Exception e) {
+    //         model.addAttribute("errorMessage", "An unexpected error occurred during cancellation.");
+    //         return "appointment-cancel";
+    //     }
+    // }
+
+    @PostMapping("/{patientId}/appointments/cancel/{appointmentId}")
+public String cancelAppointment(@PathVariable Long patientId,
+                                 @PathVariable Long appointmentId,
+                                 @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO,
+                                 Model model) {
+    System.out.println("Cancel Request Received for Patient ID: " + patientId);
+    System.out.println("Appointment ID: " + appointmentId);
+    System.out.println("Reason: " + cancelAppointmentDTO.getReasonOfCancellation());
+
+    String url = "http://localhost:8080/patient/" + patientId + "/appointments/cancel";
+    // String url = "http://localhost:8081/patient/" + patientId + "/appointments/cancel/" + appointmentId;
+    try {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        HttpEntity<CancelAppointmentDTO> request = new HttpEntity<>(cancelAppointmentDTO, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            request,
+            String.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Cancellation Successful");
+            return "appointment-cancel-confirmation";
+        } else {
+            System.out.println("Cancellation Failed: " + response.getStatusCode());
+            model.addAttribute("errorMessage", "Cancellation failed. Please try again.");
+            return "appointment-cancel";
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        model.addAttribute("errorMessage", "An unexpected error occurred during cancellation.");
+        return "appointment-cancel";
+    }
+}
+
+
+    // @PostMapping("/{patientId}/appointments/cancel")
+    // public String cancelAppointment(@PathVariable Long patientId, 
+    //                                  @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, 
+    //                                  Model model) {
+    //     String url = "http://localhost:8080/patient/" + patientId + "/appointments/cancel";
+    //     try {
+    //         HttpHeaders headers = new HttpHeaders();
+    //         headers.set("Content-Type", "application/json");
+    //         HttpEntity<CancelAppointmentDTO> request = new HttpEntity<>(cancelAppointmentDTO, headers);
+
+    //         ResponseEntity<String> response = restTemplate.exchange(
+    //             url,
+    //             HttpMethod.POST,
+    //             request,
+    //             String.class
+    //         );
+
+    //         String cancelledAppointment = response.getBody();
+
+    //         if (cancelledAppointment != null) {
+    //             model.addAttribute("appointment", cancelledAppointment);
+    //             return "appointment-cancel-confirmation";
+    //         } else {
+    //             model.addAttribute("errorMessage", "Appointment could not be cancelled. Please try again.");
+    //             return "error";
+    //         }
+    //     } catch (HttpClientErrorException e) {
+    //         model.addAttribute("errorMessage", "Invalid request or cancellation error. Please check the details.");
+    //         return "error";
+    //     } catch (Exception e) {
+    //         model.addAttribute("errorMessage", "Failed to cancel the appointment. Please try again.");
+    //         return "error";
+    //     }
+    // }
+
+    @GetMapping("/{patientId}/appointments/reschedule/{appointmentId}")
+    public String showRescheduleAppointment(@PathVariable Long patientId, 
+                                             @PathVariable Long appointmentId, 
+                                             Model model) {
+        model.addAttribute("patientId", patientId);
+        model.addAttribute("appointmentId", appointmentId);
+        return "appointment-reschedule";
+    }
+    
+    @PostMapping("/{patientId}/appointments/reschedule/{appointmentId}")
+    public String rescheduleAppointment(@PathVariable Long patientId, 
+                                         @PathVariable Long appointmentId, 
+                                         @RequestParam("newDate") String newDate, 
+                                         @RequestParam("newTime") String newTime, 
+                                         Model model) {
+        String url = "http://localhost:8080/patient/" + patientId + "/appointments/reschedule/" + appointmentId;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/json");
-            HttpEntity<CancelAppointmentDTO> request = new HttpEntity<>(cancelAppointmentDTO, headers);
-
+            Map<String, String> requestPayload = new HashMap<>();
+            requestPayload.put("newDate", newDate);
+            requestPayload.put("newTime", newTime);
+    
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(requestPayload, headers);
+    
             ResponseEntity<String> response = restTemplate.exchange(
                 url,
-                HttpMethod.POST,
+                HttpMethod.PUT,
                 request,
                 String.class
             );
-
-            String cancelledAppointment = response.getBody();
-
-            if (cancelledAppointment != null) {
-                model.addAttribute("appointment", cancelledAppointment);
-                return "appointment-cancel-confirmation";
+    
+            if (response.getStatusCode().is2xxSuccessful()) {
+                model.addAttribute("successMessage", "Appointment rescheduled successfully!");
+                return "redirect:/patient/" + patientId + "/appointments";  // Redirect to appointment management page
             } else {
-                model.addAttribute("errorMessage", "Appointment could not be cancelled. Please try again.");
-                return "error";
+                model.addAttribute("errorMessage", "Failed to reschedule the appointment. Please try again.");
+                return "appointment-reschedule";
             }
-        } catch (HttpClientErrorException e) {
-            model.addAttribute("errorMessage", "Invalid request or cancellation error. Please check the details.");
-            return "error";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to cancel the appointment. Please try again.");
-            return "error";
+            model.addAttribute("errorMessage", "An unexpected error occurred while rescheduling the appointment.");
+            return "appointment-reschedule";
         }
     }
 }
