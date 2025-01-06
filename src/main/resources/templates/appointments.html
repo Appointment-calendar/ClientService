@@ -1,289 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Management</title>
     <style>
-    /* Modern CSS Reset and Base Styles */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        /* Add styles here for appointments page */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-    body {
-        font-family: 'Roboto', Arial, sans-serif;
-        background-color: #f0f4f8;
-        color: #333;
-        line-height: 1.6;
-    }
+        .container {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+            flex-wrap: wrap;
+        }
 
-    .container {
-        display: flex;
-        min-height: 100vh;
-        width: 100%;
-    }
+        .sidebar {
+            flex: 1 1 300px;
+            background-color: #bb1fe2;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Sidebar Styles */
-    .sidebar {
-        width: 250px;
-        background-color: #2c3e50;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
+        .content {
+            flex: 2 1 600px;
+            padding: 20px;
+            background-color: white;
+            overflow-y: auto;
+            height: calc(100vh - 60px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .sidebar-button {
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        padding: 0.875rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-align: left;
-    }
+        .header-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 10;
+        }
 
-    .sidebar-button:hover {
-        background-color: #2980b9;
-    }
+        h1 {
+            background-color: #e712c4;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1.8em;
+        }
 
-    .sidebar-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+        .appointment {
+            background-color: #c98bd8;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease;
+        }
 
-    /* Cancel Button Specific Styles */
-    .cancel-button {
-        background-color: #e74c3c;
-        color: #fff;
-        border: none;
-        padding: 0.875rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
+        .appointment:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .cancel-button:hover {
-        background-color: #c0392b;
-    }
+        .appointment-title {
+            font-weight: bold;
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
 
-    .cancel-button.disabled {
-        background-color: #bdc3c7;
-        color: #7f8c8d;
-        cursor: not-allowed;
-        pointer-events: none;
-    }
+        .appointment-details {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 8px;
+        }
 
-    /* Reschedule Button Specific Styles */
-    .reschedule-button {
-        background-color: #27ae60;
-        color: #fff;
-        border: none;
-        padding: 0.875rem 1.5rem;
-        border-radius: 4px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
+        .appointment-details span {
+            font-weight: bold;
+        }
 
-    .reschedule-button:hover {
-        background-color: #229954;
-    }
+        .success-message {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 0.9em;
+        }
 
-    /* Main Content Area */
-    .content {
-        flex: 1;
-        padding: 2rem;
-        overflow-y: auto;
-    }
+        .green {
+            color: #00ff00;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
 
-    .header-container {
-        margin-bottom: 2rem;
-    }
+        .red {
+            color: red;
+            text-decoration: line-through;
+        }
 
-    h1 {
-        background-color: #3498db;
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 4px;
-        font-size: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        .blue {
+            color: blue;
+            font-style: italic;
+        }
 
-    /* Appointment Cards */
-    .appointment {
-        background-color: white;
-        border-radius: 4px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
+        /* Base style for buttons */
+        .sidebar-button {
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            width: auto;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-    .appointment:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
+        /* Schedule Appointment Button */
+        #scheduleButton {
+            background-color: #28a745; /* Green */
+        }
 
-    .appointment-title {
-        color: #2c3e50;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+        #scheduleButton:hover {
+            background-color: #218838; /* Darker Green */
+            transform: scale(1.05);
+        }
 
-    .appointment-details {
-        color: #7f8c8d;
-        margin-bottom: 0.75rem;
-        font-size: 0.95rem;
-    }
+        /* Cancel Appointment Button */
+        .cancel-button {
+            background-color: #dc3545; /* Red */
+        }
 
-    .appointment-details span {
-        color: #34495e;
-        font-weight: 500;
-    }
+        .cancel-button:hover {
+            background-color: #c82333; /* Darker Red */
+            transform: scale(1.05);
+        }
 
- 
+        
+        .reschedule-button {
+            background-color: #ffc107; /* Yellow */
+            color: black; /* Black text for contrast */
+        }
 
-    .cancel span {
-        text-decoration: line-through;
-        color: #e74c3c;
-        font-weight: bolder;
-    }
-    .highlight-reason {
-        background-color: #ffe6e6; /* Light red background */
-        color: #e74c3c; /* Bold red text */
-        font-weight: bold;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        display: inline-block;
-    }
-
+        .reschedule-button:hover {
+            background-color: #e0a800; /* Darker Yellow */
+            transform: scale(1.05);
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <!-- Sidebar -->
+        
         <div class="sidebar">
-            <button id="scheduleButton" class="sidebar-button" onclick="navigateToSchedule()">Schedule Appointment</button>
+            <button id="scheduleButton" class="sidebar-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/schedule'|">Schedule Appointment</button>
         </div>
 
         <div class="content">
             <header class="header-container">
                 <h1>Appointment Management</h1>
             </header>
-
             <div id="dynamicContent">
-                <p>Loading your appointments...</p>
+                <div th:if="${appointments == null or appointments.isEmpty()}">
+                    <p>No appointments found.</p>
+                </div>
+                <div th:each="appointment : ${appointments}" class="appointment">
+                    <div class="appointment-title" th:text="${appointment.appointmentDate + ' - ' + appointment.appointmentTime}"></div>
+                    <div class="appointment-details">
+                        <span>Status:</span>
+                        <span th:classappend="${appointment.status == 'Cancelled' ? 'red' : 'green'}" th:text="${appointment.status}"></span>
+                    </div>
+                    <div class="appointment-details">
+                        <span>Appointment ID:</span>
+                        <span th:text="${appointment.appointmentId}"></span>
+                    </div>
+                    <div class="appointment-details">
+                        <span>Doctor ID:</span>
+                        <span th:text="${appointment.doctorId}"></span>
+                    </div>
+                    <div class="appointment-details">
+                        <span>Reason:</span>
+                        <span th:text="${appointment.reason ?: 'N/A'}"></span>
+                    </div>
+                    <div th:if="${appointment.status == 'Cancelled'}" class="appointment-details">
+                        <span>Cancellation Reason:</span>
+                        <span th:text="${appointment.reasonOfCancellation ?: 'N/A'}"></span>
+                    </div>
+                   
+                    <div th:if="${appointment.status == 'Cancelled'}">
+                        <button class="sidebar-button reschedule-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/reschedule/${appointment.appointmentId}'|">Reschedule Appointment</button>
+                    </div>
+                    
+                    <div th:if="${appointment.status != 'Cancelled'}">
+                        <button class="sidebar-button cancel-button" th:onclick="|window.location.href='/patient/${patientId}/appointments/cancel/${appointment.appointmentId}'|">Cancel Appointment</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <script>
-        function getPatientId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('patientId');
-        }
-
-        function formatTo12Hour(time) {
-            const [hours, minutes] = time.split(':');
-            let hour = parseInt(hours, 10);
-            const meridian = hour >= 12 ? 'PM' : 'AM';
-            hour = hour % 12 || 12; // Convert to 12-hour format
-            return `${hour}:${minutes} ${meridian}`;
-        }
-
-        function navigateToSchedule() {
-            const patientId = getPatientId();
-            if (patientId) {
-                window.location.href = `/patient/${patientId}/appointments/schedule`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        function navigateToCancel(id) {
-            const patientId = getPatientId();
-            if (patientId) {
-                window.location.href = `/patient/${patientId}/appointments/cancel/${id}`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        function navigateToReschedule(id) {
-            const patientId = getPatientId();
-            if (patientId) {
-                window.location.href = `/patient/${patientId}/appointments/reschedule/${id}`;
-            } else {
-                alert('Patient ID is missing');
-            }
-        }
-
-        window.onload = async function() {
-    const patientId = getPatientId();
-    if (patientId) {
-        try {
-            const response = await fetch(`http://localhost:8080/patient/${patientId}/appointments`);
-            const appointments = await response.json();
-
-            const dynamicContent = document.getElementById('dynamicContent');
-            if (appointments && appointments.length > 0) {
-                dynamicContent.innerHTML = '';
-                appointments.forEach(appointment => {
-                    const div = document.createElement('div');
-                    div.classList.add('appointment');
-                    if (appointment.status === 'Cancelled') {
-                        div.classList.add('cancelled');
-                    }
-                    div.innerHTML = `
-                        <div class="appointment-title">${appointment.appointmentDate} -- ${formatTo12Hour(appointment.appointmentTime)}</div>
-                        <div class="appointment-details">
-                            <span>Status:</span> ${appointment.status === 'Cancelled' ? `<span style="text-decoration: line-through; color: #e74c3c;">${appointment.status}</span>` : appointment.status}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Appointment ID:</span> ${appointment.appointmentId}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Doctor Name:</span> ${appointment.doctorName || 'N/A'}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Doctor ID:</span> ${appointment.doctorId || 'N/A'}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Doctor Phone:</span> ${appointment.doctorPhoneNumber || 'N/A'}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Specialty:</span> ${appointment.specialty || 'N/A'}
-                        </div>
-                        <div class="appointment-details">
-                            <span>Reason:</span> ${appointment.reason || 'N/A'}
-                        </div>
-                        ${appointment.status === 'Cancelled' ? `
-                        <div class="appointment-details">
-                            <span>Reason for Cancel:</span> 
-                            <span class="highlight-reason">${appointment.reasonOfCancellation || 'N/A'}</span>
-                        </div>
-                        <button class="reschedule-button" onclick="navigateToReschedule(${appointment.appointmentId})">Reschedule</button>` : `
-                        <button class="cancel-button" onclick="navigateToCancel(${appointment.appointmentId})">Cancel Appointment</button>`}`;
-                    dynamicContent.appendChild(div);
-                });
-            } else {
-                dynamicContent.innerHTML = 'No appointments found.';
-            }
-        } catch (error) {
-            const dynamicContent = document.getElementById('dynamicContent');
-            dynamicContent.innerHTML = 'Error loading appointments.';
-        }
-    }
-};
-</script>
 </body>
+
 </html>
+
