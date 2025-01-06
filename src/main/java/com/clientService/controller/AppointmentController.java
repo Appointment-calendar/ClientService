@@ -293,3 +293,4 @@ public String cancelAppointment(@PathVariable Long patientId,
         }
     }
 }
+
