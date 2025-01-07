@@ -115,7 +115,8 @@
         }
 
         .green {
-            color: #00ff00;
+            /* color: #00ff00; */
+            color: #28a745;
             font-size: 1.1em;
             font-weight: bold;
         }
@@ -196,7 +197,12 @@
                     <div class="appointment-title" th:text="${appointment.appointmentDate + ' - ' + appointment.appointmentTime}"></div>
                     <div class="appointment-details">
                         <span>Status:</span>
-                        <span th:classappend="${appointment.status == 'Cancelled' ? 'red' : 'green'}" th:text="${appointment.status}"></span>
+                        <!-- <span th:classappend="${appointment.status == 'Cancelled' ? 'red' : 'green'}" th:text="${appointment.status}"></span> -->
+                        <span 
+                        th:classappend="${appointment.status == 'Cancelled' ? 'red' : (appointment.status == 'Scheduled' ? 'green' : (appointment.status == 'Pending' ? 'yellow' : (appointment.status == 'Rescheduled' ? 'blue' : 'yellow')))}" 
+                        th:text="${appointment.status}">
+                    </span>
+                    
                     </div>
                     <div class="appointment-details">
                         <span>Appointment ID:</span>
