@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile</title>
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .doctor-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4a5568;
+        }
+
+        .doctor-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .doctor-info {
+            margin-bottom: 20px;
+        }
+
+        .doctor-info h3 {
+            color: #2d3748;
+        }
+
+        .doctor-info p {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        .reviews {
+            margin-top: 20px;
+        }
+
+        .review {
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .review p {
+            color: #2d3748;
+        }
+
+        .back-button {
+            background-color: transparent;
+            color: #3182ce;
+            border: 1px solid #3182ce;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #3182ce;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="window.history.back();">Back to Appointment</button>
+
+        <div class="doctor-card">
+            <h2>Doctor Profile</h2>
+            <img src="..\static\doctor.jpg" alt="Doctor Image" class="doctor-image" />
+
+            <div class="doctor-info">
+                <h3>Dr. John Doe</h3>
+                <p><strong>Specialty:</strong> Cardiology</p>
+                <p><strong>Experience:</strong> 10 years of experience in treating heart conditions.</p>
+                <p><strong>About:</strong> Dr. John Doe is a renowned cardiologist with extensive experience in managing a wide range of heart diseases. He is known for his patient-centric approach and excellent bedside manner.</p>
+            </div>
+
+            <div class="reviews">
+                <h3>Patient Reviews</h3>
+                <div class="review">
+                    <p><strong>Jane Doe:</strong> "Dr. Doe is a great cardiologist. He made me feel comfortable and explained everything in detail." (Rating: 5/5)</p>
+                </div>
+                <div class="review">
+                    <p><strong>Mark Smith:</strong> "Highly recommend! He helped me recover after a heart surgery and provided great aftercare." (Rating: 5/5)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
