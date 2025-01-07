@@ -18,7 +18,7 @@
 
         <div class="content">
             <h2>Cancel Appointment</h2>
-           
+
 				<form id="cancelAppointmentForm" 
 					th:action="@{/patient/{patientId}/appointments/cancel/{appointmentId}(patientId=${patientId}, appointmentId=${cancelAppointmentDTO.appointmentId})}" 
 					th:object="${cancelAppointmentDTO}" 
@@ -167,6 +167,17 @@
         .submit-button:hover {
             background-color: #c9302c;
         }
+
+		.error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        text-align: center;
+    }
     </style>
 </body>
 </html>
