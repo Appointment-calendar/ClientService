@@ -86,7 +86,7 @@
         .appointment-title {
             font-weight: bold;
             /* color: white; */
-            color: #c98bd8;
+            color: rgb(64, 52, 118);
             font-size: 1.2em;
             margin-bottom: 10px;
         }
@@ -129,6 +129,18 @@
         .blue {
             color: blue;
             font-style: italic;
+        }
+
+        .details{
+            font-weight: normal;
+            color: rgb(64, 52, 118);
+            /* color: #555; */
+        }
+
+        .reasonOfCancellation {
+            color: red;
+            font-weight: bold;
+            background-color: #f8d7da;
         }
 
         /* Base style for buttons */
@@ -194,10 +206,20 @@
                     <p>No appointments found.</p>
                 </div>
                 <div th:each="appointment : ${appointments}" class="appointment">
-                    <div class="appointment-title" th:text="${appointment.appointmentDate + ' - ' + appointment.appointmentTime}"></div>
+                    <!-- <div class="appointment-title" th:text="${appointment.appointmentDate + ' - ' + appointment.appointmentTime}">
+                    </div> -->
+                    
+                    <div class="appointment-title" 
+                    th:text="${appointment != null ? 
+                              (appointment.appointmentDate != null && appointment.appointmentTime != null ? 
+                              appointment.appointmentDate + ' - ' + T(java.time.LocalTime).parse(appointment.appointmentTime).format(T(java.time.format.DateTimeFormatter).ofPattern('hh:mm a')) : 
+                              'Appointment details unavailable') : 
+                              'No appointment found'}">
+               </div>
+               
+
                     <div class="appointment-details">
                         <span>Status:</span>
-                        <!-- <span th:classappend="${appointment.status == 'Cancelled' ? 'red' : 'green'}" th:text="${appointment.status}"></span> -->
                         <span 
                         th:classappend="${appointment.status == 'Cancelled' ? 'red' : (appointment.status == 'Scheduled' ? 'green' : (appointment.status == 'Pending' ? 'yellow' : (appointment.status == 'Rescheduled' ? 'blue' : 'yellow')))}" 
                         th:text="${appointment.status}">
@@ -206,19 +228,23 @@
                     </div>
                     <div class="appointment-details">
                         <span>Appointment ID:</span>
-                        <span th:text="${appointment.appointmentId}"></span>
+                        <span class="details" th:text="${appointment.appointmentId}"></span>
                     </div>
                     <div class="appointment-details">
                         <span>Doctor ID:</span>
-                        <span th:text="${appointment.doctorId}"></span>
+                        <span class="details" th:text="${appointment.doctorId ?: 'N/A'}"></span>
+                    </div>
+                    <div class="appointment-details">
+                        <span>Doctor Name:</span>
+                        <span class="details" th:text="${appointment.doctorName ?: 'N/A'}"></span>
                     </div>
                     <div class="appointment-details">
                         <span>Reason:</span>
-                        <span th:text="${appointment.reason ?: 'N/A'}"></span>
+                        <span class="details" th:text="${appointment.reason ?: 'N/A'}"></span>
                     </div>
                     <div th:if="${appointment.status == 'Cancelled'}" class="appointment-details">
                         <span>Cancellation Reason:</span>
-                        <span th:text="${appointment.reasonOfCancellation ?: 'N/A'}"></span>
+                        <span class="reasonOfCancellation " th:text="${appointment.reasonOfCancellation ?: 'N/A'}"></span>
                     </div>
                    
                     <div th:if="${appointment.status == 'Cancelled'}">
