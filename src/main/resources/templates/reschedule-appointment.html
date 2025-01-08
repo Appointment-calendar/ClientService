@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reschedule Appointment</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .time-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .time-container input, .time-container select {
+            width: 32%;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .success {
+            color: #27ae60;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reschedule Appointment</h1>
+        <div id="message" class="error" style="display: none;"></div>
+        <form id="rescheduleForm">
+            <label for="appointmentDate">New Appointment Date</label>
+            <input type="date" id="appointmentDate" name="appointmentDate" required>
+
+            <label for="appointmentTime">New Appointment Time</label>
+            <div class="time-container">
+                <input type="number" id="appointmentHour" name="appointmentHour" min="1" max="12" required placeholder="Hour">
+                <input type="number" id="appointmentMinute" name="appointmentMinute" min="0" max="59" required placeholder="Minute">
+                <select id="appointmentPeriod" name="appointmentPeriod" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function getPatientIdAndAppointmentId() {
+            const pathParts = window.location.pathname.split('/');
+            const patientId = pathParts[2]; // Extracts "1" from "/patient/1/appointments/reschedule/2"
+            const appointmentId = pathParts[5]; // Extracts "2"
+            return { patientId, appointmentId };
+        }
+
+        document.getElementById('rescheduleForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const { patientId, appointmentId } = getPatientIdAndAppointmentId();
+            const appointmentDate = document.getElementById('appointmentDate').value;
+            const appointmentHour = document.getElementById('appointmentHour').value;
+            const appointmentMinute = document.getElementById('appointmentMinute').value;
+            const appointmentPeriod = document.getElementById('appointmentPeriod').value;
+
+            if (!appointmentDate || !appointmentHour || !appointmentMinute || !appointmentPeriod) {
+                showMessage('Please fill out all fields.', 'error');
+                return;
+            }
+
+            // Convert 12-hour time to 24-hour format
+            let hour = parseInt(appointmentHour);
+            if (appointmentPeriod === "PM" && hour !== 12) {
+                hour += 12;  // Convert PM hours (except 12 PM)
+            }
+            if (appointmentPeriod === "AM" && hour === 12) {
+                hour = 0;  // Convert 12 AM to 00
+            }
+
+            const timeString = `${hour.toString().padStart(2, '0')}:${appointmentMinute.padStart(2, '0')}:00`;
+
+            try {
+                const response = await fetch(`http://localhost:8080/patient/${patientId}/appointments/reschedule/${appointmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ newDate: appointmentDate, newTime: timeString }),
+                });
+
+                if (response.ok) {
+                    showMessage('Appointment rescheduled successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = `/patient/${patientId}/appointments?patientId=${patientId}`;// Redirect to appointments page
+                    }, 3000);
+                } else {
+                    const errorData = await response.json();
+                    showMessage(errorData.message || 'Failed to reschedule appointment.', 'error');
+                }
+            } catch (error) {
+                showMessage('An error occurred while rescheduling. Please try again later.', 'error');
+            }
+        });
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = type;
+            messageDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
