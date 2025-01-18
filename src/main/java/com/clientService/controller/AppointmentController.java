@@ -2,13 +2,9 @@ package com.clientService.controller;
 
 import com.clientService.model.AppointmentDTO;
 import com.clientService.model.CancelAppointmentDTO;
-import com.clientService.model.Doctor;
 import com.clientService.model.ScheduleAppointmentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +19,7 @@ public class AppointmentController {
     @Autowired
     private RestTemplate restTemplate;
 
+    // View all appointments for a specific patient
     @GetMapping("/{patientId}/appointments")
     public String showAppointmentsForPatient(@PathVariable Long patientId, Model model) {
         try {
@@ -45,6 +42,7 @@ public class AppointmentController {
         }
     }
 
+    // Show the page to schedule a new appointment
     @GetMapping("/{patientId}/appointments/schedule")
     public String showScheduleAppointment(@PathVariable Long patientId, Model model) {
         model.addAttribute("scheduleAppointmentDTO", new ScheduleAppointmentDTO());
@@ -52,6 +50,7 @@ public class AppointmentController {
         return "appointment-schedule";
     }
 
+    // Schedule an appointment
     @PostMapping("/{patientId}/appointments/schedule")
     public String scheduleAppointment(
             @PathVariable Long patientId,
@@ -59,45 +58,41 @@ public class AppointmentController {
             Model model) {
 
         try {
-            // Construct the API endpoint for scheduling the appointment
             String url = "http://localhost:8080/patient/" + patientId + "/appointments/schedule";
 
-            // Set headers for the request
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            // Wrap the DTO in an HttpEntity to include headers and body
             HttpEntity<ScheduleAppointmentDTO> requestEntity = new HttpEntity<>(scheduleAppointmentDTO, headers);
 
-            // Send the POST request and get the response as AppointmentDTO
             AppointmentDTO createdAppointment = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AppointmentDTO.class).getBody();
 
-            // Check if appointment was created successfully
             if (createdAppointment != null) {
                 model.addAttribute("appointment", createdAppointment);
-                return "appointment-confirmation";  // Show confirmation view
+                return "appointment-confirmation"; // Show confirmation view
             } else {
                 model.addAttribute("errorMessage", "Appointment could not be scheduled. Please try again.");
-                return "error";  // Show error page if appointment creation failed
+                return "error";  // Show error page
             }
         } catch (HttpClientErrorException e) {
-            // Handle HTTP client error (e.g., 400 Bad Request)
             model.addAttribute("errorMessage", "Invalid input or scheduling conflict. Please check your details.");
             return "error";  // Show error page with message
         } catch (Exception e) {
-            // Handle other general exceptions
             model.addAttribute("errorMessage", "Failed to schedule the appointment. Please try again.");
             return "error";  // Show error page for other errors
         }
     }
+
+    // Show the page to cancel an appointment
     @GetMapping("/{patientId}/appointments/cancel/{id}")
     public String showCancelAppointment(@PathVariable Long patientId, @PathVariable Long id, Model model) {
         model.addAttribute("cancelAppointmentDTO", new CancelAppointmentDTO());
         model.addAttribute("patientId", patientId);
-        model.addAttribute("appointmentId", id); // Add if needed for context
+        model.addAttribute("appointmentId", id); // Add appointment ID for context
         return "appointment-cancel";
     }
 
+    // Cancel an appointment
     @PostMapping("/{patientId}/appointments/cancel")
     public String cancelAppointment(@PathVariable Long patientId, @ModelAttribute CancelAppointmentDTO cancelAppointmentDTO, Model model) {
         try {
@@ -118,21 +113,19 @@ public class AppointmentController {
             model.addAttribute("errorMessage", "Failed to cancel the appointment. Please try again.");
             return "error";
         }
-
     }
+
+    // View the profile of a doctor
     @GetMapping("/doctor/{doctorId}/profile")
     public String getDoctorProfile(@PathVariable("doctorId") Long doctorId, Model model) {
-
+        // Logic to fetch doctor details (if required)
         return "doctor-profile"; // This will render the doctor-profile.html page
     }
+
+    // View the page to reschedule an appointment
     @GetMapping("/{patientId}/appointments/reschedule/{appointmentId}")
     public String getReschedulePage(@PathVariable Long patientId, @PathVariable Long appointmentId) {
-        // Log patient and appointment details for debugging
         System.out.println("Navigating to reschedule page for Patient ID: " + patientId + ", Appointment ID: " + appointmentId);
-
-        // Return the view name for rendering the reschedule page
         return "reschedule-appointment"; // Ensure the HTML file is named reschedule-appointment.html
     }
-
 }
-
