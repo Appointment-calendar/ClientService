@@ -1,10 +1,8 @@
 package com.clientService.controller;
-
 import com.clientService.model.AppointmentDTO;
 import com.clientService.model.CancelAppointmentDTO;
 import com.clientService.model.DoctorDTO;
 import com.clientService.model.ScheduleAppointmentDTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
@@ -15,11 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,4 +233,8 @@ public String cancelAppointment(@PathVariable Long patientId,
             return "error";
         }
     }
+     // Ensure the view name matches the template name
+
+
+
 }
