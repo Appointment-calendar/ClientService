@@ -1,17 +1,13 @@
 package com.clientService.controller;
 
 import com.clientService.Service.DoctorService;
-import com.clientService.model.DoctorDTO;
+  // Assuming you have a PatientDTO
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DoctorController {
@@ -19,11 +15,37 @@ public class DoctorController {
     @Autowired
     DoctorService doctorService;
 
-    @GetMapping("/doctor/{doctorId}/profile") // Corrected URL mapping
-    public String getDoctorProfile(@PathVariable("doctorId") int id, Model model){
-                DoctorDTO doctor = new DoctorDTO();
-                doctor.setDateOfJoining(LocalDate.now()); // Assuming `doctor.dateOfJoining` is of type `LocalDate`
-                model.addAttribute("doctor", doctor);
-                return "doctor-profile";  // Thymeleaf template
-            }
+//    @Autowired
+//    PatientService patientService;  // Assuming you have a PatientService for fetching patient data
+
+    @GetMapping("/doctor-profile")
+    public String getDoctorProfile(
+            @RequestParam("doctorId") int doctorId,
+            @RequestParam("patientId") int patientId,
+            Model model) {
+
+        // Fetch doctor data based on doctorId
+//        DoctorDTO doctor = doctorService.getDoctorById(doctorId);
+//
+        // Fetch patient data based on patientId
+//        PatientDTO patient = patientService.getPatientById(patientId);
+//
+//        // Handle cases where doctor or patient is not found
+//        if (doctor == null) {
+//            model.addAttribute("error", "Doctor not found");
+//            return "error-page";  // Return an error page template
+//        }
+//
+//        if (patient == null) {
+//            model.addAttribute("error", "Patient not found");
+//            return "error-page";  // Return an error page template
+//        }
+//
+//        // Add doctor and patient data to the model
+//        model.addAttribute("doctor", doctor);
+//        model.addAttribute("patient", patient);
+
+        // Return the doctor-profile template for rendering
+        return "doctor-profile"; // Thymeleaf template to display the doctor and patient information
+    }
 }

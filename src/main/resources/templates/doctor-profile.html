@@ -1,166 +1,355 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Doctor Profile</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Booking - Dr. John Doe</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #f1f5f9;
+            --text-color: #334155;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
         }
 
         .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 2rem;
         }
 
         .card {
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
         }
 
-        .card-header {
-            background-color: #007bff;
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-image {
+            width: 160px;
+            height: 160px;
+            border-radius: 1rem;
+            background: linear-gradient(45deg, #2563eb, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            border-radius: 8px 8px 0 0;
-            padding: 15px;
+            font-size: 3rem;
+        }
+
+        .profile-info h1 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: #dbeafe;
+            color: var(--primary-color);
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            margin: 0.25rem 0;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            color: #64748b;
+        }
+
+        .reviews {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .review-card {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .rating {
+            color: #eab308;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-section h2 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+        }
+
+        .fee-info {
+            background: #f0f9ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-picker {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-box {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            cursor: pointer;
             text-align: center;
+            min-width: 80px;
+            transition: all 0.2s;
         }
 
-        .card-body {
-            padding: 20px;
+        .date-box:hover {
+            border-color: var(--primary-color);
         }
 
-        h2 {
+        .date-box.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
             text-align: center;
-            color: #007bff;
-            margin-bottom: 40px;
-            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .card-body p {
-            margin: 10px 0;
-            font-size: 1.1rem;
+        .time-slot:hover {
+            border-color: var(--primary-color);
         }
 
-        .card-body span {
-            font-weight: bold;
+        .time-slot.active {
+            background: var(--primary-color);
+            color: white;
         }
 
-        .card-body ul {
-            list-style-type: none;
-            padding-left: 0;
+        .book-button {
+            background: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .card-body li {
-            background-color: #f1f1f1;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
+        .book-button:hover {
+            background: var(--secondary-color);
         }
 
-        .alert {
-            margin-top: 20px;
-            display: none;
-            padding: 15px;
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            border-radius: 5px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-            }
-
-            h2 {
-                font-size: 1.6rem;
-            }
-
-            .card-header {
-                font-size: 1.5rem;
-            }
-
-            .card-body p {
-                font-size: 1rem;
-            }
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            resize: vertical;
         }
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2 class="mb-4">Doctor Profile</h2>
-    <div id="doctorProfile" class="card d-none">
-        <div class="card-header">
-            <h4 id="doctorName">Doctor Name</h4>
+    <div class="container">
+        <div class="card">
+            <div class="profile-header">
+                <div class="profile-image">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="profile-info">
+                    <h1 id="doctorName">Dr. John Doe</h1>
+                    <div class="badge" id="doctorSpecialty">Cardiology</div>
+                    <div class="info-row">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span id="doctorQualification">MBBS, MD</span>
+                    </div>
+                    <div class="info-row">
+                        <i class="fas fa-clock"></i>
+                        <span id="doctorExperience">10+ years experience</span>
+                    </div>
+                    <div class="info-row">
+                        <i class="fas fa-language"></i>
+                        <span id="doctorLanguages">English, Spanish</span>
+                    </div>
+                    <div class="info-row">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="doctorLocation">New York, USA</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-section">
+                <h2>About</h2>
+                <p id="doctorAbout">Experienced cardiologist specializing in heart diseases.</p>
+            </div>
+
+            <div class="reviews">
+                <h2>Patient Reviews</h2>
+                <div class="review-card">
+                    <div class="rating">★★★★★</div>
+                    <strong>Alice Brown</strong>
+                    <p>Dr. John is very knowledgeable and kind.</p>
+                </div>
+                <div class="review-card">
+                    <div class="rating">★★★★☆</div>
+                    <strong>Michael Green</strong>
+                    <p>The consultation was thorough, but the waiting time was long.</p>
+                </div>
+                <div class="review-card">
+                    <div class="rating">★★★★★</div>
+                    <strong>Sarah Johnson</strong>
+                    <p>Exceptional care and advice. Highly recommended!</p>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <p><strong>Specialty:</strong> <span id="doctorSpecialty">Specialty</span></p>
-            <p><strong>Qualification:</strong> <span id="doctorQualification">Qualification</span></p>
-            <p><strong>Contact Number:</strong> <span id="doctorContactNumber">Contact Number</span></p>
-            <p><strong>Email:</strong> <span id="doctorEmail">Email</span></p>
-            <p><strong>Gender:</strong> <span id="doctorGender">Gender</span></p>
-            <p><strong>Location:</strong> <span id="doctorLocation">Location</span></p>
-            <p><strong>Consultation Fees:</strong> $<span id="doctorFees">0.0</span></p>
-            <p><strong>Date of Joining:</strong> <span id="doctorJoiningDate"></span></p>
-            <p><strong>Is Surgeon:</strong> <span id="doctorIsSurgeon">Surgeon Status</span></p>
-            <p><strong>Years of Experience:</strong> <span id="doctorExperience">0</span></p>
-            <p><strong>Status:</strong> <span id="doctorStatus">Status</span></p>
-            <p><strong>Availability:</strong></p>
-            <ul id="doctorAvailability"></ul>
+
+        <div class="card booking-section">
+            <h2>Book Appointment</h2>
+            <div class="fee-info">
+                <div class="info-row">
+                    <i class="fas fa-dollar-sign"></i>
+                    <strong id="consultationFee">Consultation Fee: $500</strong>
+                </div>
+            </div>
+
+            <div class="date-picker" id="datePicker"></div>
+
+            <h3>Available Time Slots</h3>
+            <div class="time-slots" id="timeSlots"></div>
+
+            <textarea id="appointmentReason" placeholder="Reason for visit (optional)" rows="4"></textarea>
+
+            <button class="book-button" onclick="handleBooking()">Book Appointment</button>
         </div>
     </div>
-    <div id="errorMessage" class="alert">Error message</div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Extract the doctor ID from the URL
-        const doctor = window.location.pathname.split('/');
-         doctor.pop();
-        var id=doctor.pop();
-        console.log(id);
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDoctorProfile(1);
+            fetchDoctorTimings(1);
+            generateDatePicker();
+        });
 
-        fetch(`http://localhost:8080/api/doctors/${id}`) // Use the extracted doctorId
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('doctorName').textContent = data.name;
-                document.getElementById('doctorSpecialty').textContent = data.specialty;
-                document.getElementById('doctorQualification').textContent = data.qualification;
-                document.getElementById('doctorContactNumber').textContent = data.contactNumber;
-                document.getElementById('doctorEmail').textContent = data.emailId;
-                document.getElementById('doctorGender').textContent = data.gender;
-                document.getElementById('doctorLocation').textContent = data.location;
-                document.getElementById('doctorFees').textContent = data.consultationFees;
-                document.getElementById('doctorJoiningDate').textContent = new Date(data.dateOfJoining).toLocaleDateString();
-                document.getElementById('doctorIsSurgeon').textContent = data.isSurgeon ? 'Yes' : 'No';
-                document.getElementById('doctorExperience').textContent = data.yearsOfExperience;
-                document.getElementById('doctorStatus').textContent = data.status ? 'Available' : 'Not Available';
+        function fetchDoctorProfile(doctorId) {
+            fetch(`http://localhost:8080/api/doctors/${doctorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('doctorName').textContent = data.name;
+                    document.getElementById('doctorSpecialty').textContent = data.specialty;
+                    document.getElementById('doctorQualification').textContent = data.qualification;
+                    document.getElementById('doctorExperience').textContent = `${data.experience} years experience`;
+                    document.getElementById('doctorLanguages').textContent = data.languages.join(', ');
+                    document.getElementById('doctorLocation').textContent = data.location;
+                    document.getElementById('doctorAbout').textContent = data.about;
+                    document.getElementById('consultationFee').textContent = `Consultation Fee: $${data.consultationFee}`;
+                })
+                .catch(error => console.error('Error fetching doctor profile:', error));
+        }
 
-                const availabilityList = document.getElementById('doctorAvailability');
-                availabilityList.innerHTML = '';
-                for (let day in data.availability) {
-                    let times = data.availability[day].join(', ');
-                    let listItem = document.createElement('li');
-                    listItem.textContent = `Day: ${day}, Times: ${times}`;
-                    availabilityList.appendChild(listItem);
-                }
+        function fetchDoctorTimings(doctorId) {
+            fetch(`http://localhost:8080/api/doctors/timings/${doctorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const timeSlotsContainer = document.getElementById('timeSlots');
+                    timeSlotsContainer.innerHTML = '';
 
-                document.getElementById('doctorProfile').classList.remove('d-none');
-            })
-            .catch(error => {
-                document.getElementById('errorMessage').textContent = 'Error fetching doctor data';
-                document.getElementById('errorMessage').classList.remove('d-none');
-                console.error('Error fetching doctor data:', error);
-            });
-    });
-</script>
+                    data.forEach(slot => {
+                        const slotDiv = document.createElement('div');
+                        slotDiv.className = 'time-slot';
+                        slotDiv.textContent = slot;
+                        slotDiv.onclick = () => selectTimeSlot(slotDiv, slot);
+                        timeSlotsContainer.appendChild(slotDiv);
+                    });
+                })
+                .catch(error => console.error('Error fetching doctor timings:', error));
+        }
+
+        function generateDatePicker() {
+            const datePickerContainer = document.getElementById('datePicker');
+            const today = new Date();
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+
+                const dateBox = document.createElement('div');
+                dateBox.className = 'date-box';
+                dateBox.textContent = date.toDateString();
+                dateBox.onclick = () => selectDate(dateBox, date.toISOString().split('T')[0]);
+                datePickerContainer.appendChild(dateBox);
+            }
+        }
+
+        let selectedDate = '';
+        let selectedTime = '';
+
+        function selectDate(dateBox, date) {
+            document.querySelectorAll('.date-box').forEach(box => box.classList.remove('active'));
+            dateBox.classList.add('active');
+            selectedDate = date;
+        }
+
+        function selectTimeSlot(slotDiv, time) {
+            document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('active'));
+            slotDiv.classList.add('active');
+            selectedTime = time;
+        }
+
+        function handleBooking() {
+            if (!selectedDate || !selectedTime) {
+                alert('Please select both date and time for the appointment.');
+                return;
+            }
+
+            const reason = document.getElementById('appointmentReason').value;
+            alert(`Appointment booked for ${selectedDate} at ${selectedTime}\nReason: ${reason}`);
+        }
+    </script>
 </body>
 </html>

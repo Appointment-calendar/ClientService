@@ -90,12 +90,12 @@ public class AppointmentController {
     @PostMapping("/{patientId}/appointments/schedule")
     public String scheduleAppointment(@PathVariable Long patientId, 
                                        @ModelAttribute ScheduleAppointmentDTO scheduleAppointmentDTO, 
-                                       Model model) {
-        String url = "http://localhost:8080/patient/" + patientId + "/appointments/schedule";
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
-            HttpEntity<ScheduleAppointmentDTO> request = new HttpEntity<>(scheduleAppointmentDTO, headers);
+                                           Model model) {
+            String url = "http://localhost:8080/patient/" + patientId + "/appointments/schedule";
+            try {
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Content-Type", "application/json");
+                HttpEntity<ScheduleAppointmentDTO> request = new HttpEntity<>(scheduleAppointmentDTO, headers);
 
             ResponseEntity<AppointmentDTO> response = restTemplate.exchange(
                 url,
