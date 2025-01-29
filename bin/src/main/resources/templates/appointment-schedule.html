@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Doctor Appointment System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #60a5fa;
+            --background: #f8fafc;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-filters {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px var(--shadow);
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .doctor-header {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .doctor-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doctor-body {
+            padding: 1.5rem;
+        }
+
+        .doctor-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .doctor-info p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .doctor-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 1rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .appointment-form {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--background);
+            border-radius: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .search-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Find Your Doctor</h1>
+            <p>Book appointments with the best doctors near you</p>
+        </div>
+
+        <div class="search-filters">
+            <div class="input-group">
+                <label>
+                    <i class="fas fa-search"></i> Search Doctor
+                </label>
+                <input type="text" id="searchName" placeholder="Doctor's name">
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <i class="fas fa-stethoscope"></i> Specialty
+                </label>
+                <select id="specialty">
+                    <option value="">All Specialties</option>
+                    <option value="cardiology">Cardiology</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="general medicine">General Medicine</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <i class="fas fa-user-md"></i> Experience
+                </label>
+                <select id="experience">
+                    <option value="">Any Experience</option>
+                    <option value="0-5">0-5 years</option>
+                    <option value="5-10">5-10 years</option>
+                    <option value="10+">10+ years</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <i class="fas fa-venus-mars"></i> Gender
+                </label>
+                <select id="gender">
+                    <option value="">Any Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="doctors-grid" id="doctorsGrid"></div>
+
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <div id="doctorProfile">
+                    <h2 id="modalDoctorName"></h2>
+                    <div class="doctor-info">
+                        <p><i class="fas fa-stethoscope"></i> <span id="modalSpecialty"></span></p>
+                        <p><i class="fas fa-graduation-cap"></i> <span id="modalQualification"></span></p>
+                        <p><i class="fas fa-user-md"></i> <span id="modalExperience"></span> years</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <span id="modalLocation"></span></p>
+                        <p><i class="fas fa-dollar-sign"></i> <span id="modalFee"></span></p>
+                        <p><i class="fas fa-phone"></i> <span id="modalContact"></span></p>
+                        <p><i class="fas fa-envelope"></i> <span id="modalEmail"></span></p>
+                        <p><i class="fas fa-clock"></i> Available Times:</p>
+                        <ul id="modalAvailability"></ul>
+                    </div>
+
+                    <div class="appointment-form">
+                        <h3>Schedule Appointment</h3>
+                        <form id="appointmentForm" onsubmit="scheduleAppointment(event)">
+                            <input type="hidden" id="selectedDoctorId">
+                            <div class="form-group">
+                                <label for="appointmentDate">Date:</label>
+                                <input type="date" id="appointmentDate" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentTime">Time:</label>
+                                <input type="time" id="appointmentTime" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointmentReason">Reason for Visit:</label>
+                                <textarea id="appointmentReason" class="form-input" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i> Schedule Appointment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let doctors = [];
+
+        function fetchDoctors() {
+            fetch('http://localhost:8080/api/doctors')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`An error occurred: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    doctors = data.map(doctor => ({
+                        id: doctor.doctorId,
+                        name: doctor.name,
+                        specialty: doctor.specialty,
+                        experience: doctor.yearsOfExperience,
+                        location: doctor.location,
+                        qualification: doctor.qualification,
+                        fee: doctor.consultationFees,
+                        gender: doctor.gender,
+                        contactNumber: doctor.contactNumber,
+                        emailId: doctor.emailId,
+                        isSurgeon: doctor.isSurgeon,
+                        status: doctor.status,
+                        timings: doctor.timings
+                    }));
+                    filterDoctors();
+                })
+                .catch(error => {
+                    console.error('Error fetching doctors:', error);
+                    // Use mock data if API fails
+                    doctors = [
+                        {
+                            "id": 1,
+                            "name": "Dr. John Doe",
+                            "specialty": "Cardiology",
+                            "qualification": "MBBS, MD",
+                            "contactNumber": "9876543210",
+                            "emailId": "dr.john@example.com",
+                            "gender": "male",
+                            "location": "New York",
+                            "fee": 200.0,
+                            "experience": 12,
+                            "isSurgeon": true,
+                            "status": true,
+                            "timings": [
+                                {
+                                    "timingId": 1,
+                                    "availableDate": "2025-01-26",
+                                    "dayOfWeek": "Monday",
+                                    "timeOfDay": "Morning",
+                                    "startTime": "09:00:00",
+                                    "endTime": "09:30:00"
+                                }
+                                // Add more timings as needed
+                            ]
+                        }
+                        // Add more doctors as needed
+                    ];
+                    filterDoctors();
+                });
+        }
+
+        function filterDoctors() {
+            const searchName = document.getElementById('searchName').value.toLowerCase();
+            const specialty = document.getElementById('specialty').value.toLowerCase();
+            const experience = document.getElementById('experience').value;
+            const gender = document.getElementById('gender').value.toLowerCase();
+
+            const filtered = doctors.filter(doctor => {
+                const nameMatch = doctor.name.toLowerCase().includes(searchName);
+                const specialtyMatch = !specialty || doctor.specialty.toLowerCase().includes(specialty);
+                const experienceMatch = !experience || getExperienceRange(doctor.experience) === experience;
+                const genderMatch = !gender || doctor.gender.toLowerCase() === gender;
+                return nameMatch && specialtyMatch && experienceMatch && genderMatch && doctor.status;
+            });
+
+            displayDoctors(filtered);
+        }
+
+        function getExperienceRange(years) {
+            if (years <= 5) return '0-5';
+            if (years <= 10) return '5-10';
+            return '10+';
+        }
+
+        function displayDoctors(doctorsList) {
+            const grid = document.getElementById('doctorsGrid');
+            grid.innerHTML = '';
+
+            doctorsList.forEach(doctor => {
+                const card = document.createElement('div');
+                card.className = 'doctor-card';
+                card.innerHTML = `
+                    <div class="doctor-header">
+                        <h3>${doctor.name}</h3>
+                        <p>${doctor.specialty}</p>
+                    </div>
+                    <div class="doctor-body">
+                        <div class="doctor-info">
+                            <p><i class="fas fa-user-md"></i> ${doctor.experience} years experience</p>
+                            <p><i class="fas fa-graduation-cap"></i> ${doctor.qualification}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${doctor.location}</p>
+                            <p><i class="fas fa-dollar-sign"></i> $${doctor.fee}</p>
+                            <p><i class="fas fa-phone"></i> ${doctor.contactNumber}</p>
+                        </div>
+                        <div class="doctor-actions">
+                            <button class="btn btn-primary" onclick="showDoctorProfileInAnotherPage(${doctor.id})">
+                                <i class="fas fa-calendar-alt"></i> Book Appointment
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function extractPatientIdFromUrl() {
+            const url = window.location.href;
+            const parts = url.split('/');
+            const patientIndex = parts.indexOf('patient');
+            if (patientIndex !== -1 && parts[patientIndex + 1]) {
+                return parts[patientIndex + 1];
+            }
+            return null;
+        }
+
+        function showDoctorProfileInAnotherPage(doctorId) {
+            const url = `/doctor-profile?doctorId=${doctorId}&patientId=${extractPatientIdFromUrl()}`;
+            window.location.href = url;
+        }
+
+        function scheduleAppointment(event) {
+            event.preventDefault();
+
+            const doctorId = document.getElementById('selectedDoctorId').value;
+            const appointmentDate = document.getElementById('appointmentDate').value;
+            const appointmentTime = document.getElementById('appointmentTime').value;
+            const appointmentReason = document.getElementById('appointmentReason').value;
+
+            const doctor = doctors.find(d => d.id === parseInt(doctorId));
+            
+            const isTimeSlotAvailable = doctor.timings.some(timing => 
+                timing.availableDate === appointmentDate &&
+                timing.startTime <= appointmentTime &&
+                timing.endTime > appointmentTime
+            );
+
+            if (!isTimeSlotAvailable) {
+                alert('Selected time slot is not available. Please choose another time.');
+                return;
+            }
+
+            const appointmentDetails = {
+                doctorId,
+                date: appointmentDate,
+                time: appointmentTime,
+                reason: appointmentReason,
+            };
+
+            console.log('Scheduling appointment:', appointmentDetails);
+
+            alert(`Appointment scheduled with ${doctor.name} on ${appointmentDate} at ${formatTime(appointmentTime)}.`);
+            closeModal();
+            resetForm();
+        }
+
+        function closeModal() {
+            document.getElementById('profileModal').style.display = 'none';
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('appointmentForm').reset();
+            document.getElementById('appointmentTime').disabled = false;
+        }
+
+        document.getElementById('searchName').addEventListener('input', filterDoctors);
+        document.getElementById('specialty').addEventListener('change', filterDoctors);
+        document.getElementById('experience').addEventListener('change', filterDoctors);
+        document.getElementById('gender').addEventListener('change', filterDoctors);
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('profileModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchDoctors);
+    </script>
+</body>
+</html>

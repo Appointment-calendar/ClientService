@@ -4,8 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class DoctorDTO {
+	
+	@JsonProperty("doctorId")
 	private int id;
+	 
 	private String name;
 	private String specialty;
 	private String qualification;
