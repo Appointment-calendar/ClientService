@@ -15,23 +15,39 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #2c3e50, #4ca1af); /* Updated gradient */
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
+        /* Container Styling */
         .container {
             max-width: 500px;
             width: 100%;
-            background: #fff;
+            background: #e3f2fd;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Fade-in Keyframe */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -39,6 +55,26 @@
             margin-bottom: 20px;
         }
 
+        /* Back Button Styling */
+        .btn-back {
+            background: transparent;
+            color: #007bff;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        /* Form Group and Button Styling */
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -95,19 +131,7 @@
             background: #0056b3;
         }
 
-        .btn-back {
-            background: transparent;
-            color: #007bff;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .btn-back:hover {
-            text-decoration: underline;
-        }
-
+        /* Success/Error Message Styles */
         .message {
             padding: 12px;
             border-radius: 6px;
@@ -134,6 +158,7 @@
             border: 1px solid #ccc;
             font-size: 14px;
         }
+
 	</style>
 </head>
 
@@ -203,13 +228,6 @@
 
 
 
-
-
-
-
-
-
-
 <!--<!DOCTYPE html>-->
 <!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
 
@@ -218,214 +236,251 @@
 <!--	<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
 <!--	<title>Reschedule Appointment</title>-->
 <!--	<style>-->
+
 <!--		/* General Styling */-->
-<!--		* {-->
-<!--			margin: 0;-->
-<!--			padding: 0;-->
-<!--			box-sizing: border-box;-->
-<!--		}-->
+<!--* {-->
+<!--    margin: 0;-->
+<!--    padding: 0;-->
+<!--    box-sizing: border-box;-->
+<!--}-->
 
-<!--		body {-->
-<!--			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;-->
-<!--			background-color: #f4f4f9;-->
-<!--			color: #333;-->
-<!--			line-height: 1.6;-->
-<!--		}-->
+<!--body {-->
+<!--    font-family: 'Poppins', sans-serif;-->
+<!--&lt;!&ndash;    background-color: #f0f2f5;&ndash;&gt;-->
+<!--    background: #2563eb;-->
+<!--    color: #333;-->
+<!--    line-height: 1.6;-->
+<!--    display: flex;-->
+<!--    justify-content: center;-->
+<!--    align-items: center;-->
+<!--    height: 100vh;-->
+<!--    overflow: hidden;-->
+<!--    position: relative;-->
+<!--}-->
 
-<!--		.container {-->
-<!--			max-width: 600px;-->
-<!--			margin: 40px auto;-->
-<!--			padding: 30px;-->
-<!--			background-color: #fff;-->
-<!--			border-radius: 10px;-->
-<!--			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);-->
-<!--		}-->
+<!--/* Animated Gradient Blobs */-->
+<!--body::before, body::after {-->
+<!--    content: "";-->
+<!--    position: absolute;-->
+<!--    width: 400px;-->
+<!--    height: 400px;-->
+<!--    background: radial-gradient(circle, rgba(0,123,255,0.6) 10%, rgba(255,0,150,0.4) 50%);-->
+<!--    border-radius: 50%;-->
+<!--    filter: blur(100px);-->
+<!--    animation: moveBlobs 12s infinite alternate ease-in-out;-->
+<!--}-->
+
+<!--body::before {-->
+<!--    top: -100px;-->
+<!--    left: -100px;-->
+<!--}-->
+
+<!--body::after {-->
+<!--    bottom: -100px;-->
+<!--    right: -100px;-->
+<!--}-->
+
+<!--/* Keyframe animation for floating effect */-->
+<!--@keyframes moveBlobs {-->
+<!--    0% {-->
+<!--        transform: translateY(-30px) translateX(-30px);-->
+<!--    }-->
+<!--    50% {-->
+<!--        transform: translateY(30px) translateX(30px);-->
+<!--    }-->
+<!--    100% {-->
+<!--        transform: translateY(-30px) translateX(-30px);-->
+<!--    }-->
+<!--}-->
+
+<!--/* Fade-in effect */-->
+<!--.container {-->
+<!--    max-width: 500px;-->
+<!--    width: 100%;-->
+<!--    background: #e3f2fd;-->
+<!--    padding: 30px;-->
+<!--    border-radius: 12px;-->
+<!--    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);-->
+<!--    text-align: center;-->
+<!--    animation: fadeIn 1.5s ease-in-out;-->
+<!--    position: relative;-->
+<!--    z-index: 1;-->
+<!--}-->
 
 
-<!--		.form-group {-->
-<!--			margin-bottom: 20px;-->
-<!--		}-->
+<!--/* Fade-in Keyframe */-->
+<!--@keyframes fadeIn {-->
+<!--    0% {-->
+<!--        opacity: 0;-->
+<!--        transform: translateY(-20px);-->
+<!--    }-->
+<!--    100% {-->
+<!--        opacity: 1;-->
+<!--        transform: translateY(0);-->
+<!--    }-->
+<!--}-->
 
-<!--		label {-->
-<!--			font-size: 14px;-->
-<!--			font-weight: bold;-->
-<!--			display: block;-->
-<!--			margin-bottom: 5px;-->
-<!--		}-->
+<!--h1 {-->
+<!--    font-size: 22px;-->
+<!--    margin-bottom: 20px;-->
+<!--}-->
 
-<!--		.date-container {-->
-<!--			display: grid;-->
-<!--			grid-template-columns: repeat(7, 1fr);-->
-<!--			gap: 10px;-->
-<!--		}-->
+<!--.form-group {-->
+<!--    margin-bottom: 20px;-->
+<!--    text-align: left;-->
+<!--}-->
 
-<!--		.date-item {-->
-<!--			text-align: center;-->
-<!--			background: white;-->
-<!--			padding: 10px;-->
-<!--			border-radius: 4px;-->
-<!--			cursor: pointer;-->
-<!--			border: 1px solid #ddd;-->
-<!--			font-size: 14px;-->
-<!--			transition: 0.3s;-->
-<!--		}-->
+<!--label {-->
+<!--    font-weight: 600;-->
+<!--    margin-bottom: 5px;-->
+<!--    display: block;-->
+<!--}-->
 
-<!--		.date-item:hover {-->
-<!--			background: #007bff;-->
-<!--			color: white;-->
-<!--		}-->
+<!--.date-container {-->
+<!--    display: grid;-->
+<!--    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));-->
+<!--    gap: 10px;-->
+<!--    justify-content: center;-->
+<!--    margin-top: 10px;-->
+<!--}-->
 
-<!--		.selected {-->
-<!--			background: #007bff;-->
-<!--			color: white;-->
-<!--		}-->
+<!--.date-item, button[type="submit"] {-->
+<!--    padding: 12px;-->
+<!--    border-radius: 6px;-->
+<!--    border: none;-->
+<!--    cursor: pointer;-->
+<!--    font-size: 14px;-->
+<!--    transition: 0.3s;-->
+<!--}-->
 
+<!--.date-item {-->
+<!--    background: #e9ecef;-->
+<!--    text-align: center;-->
+<!--    font-weight: 500;-->
+<!--}-->
 
+<!--.date-item:hover, .selected {-->
+<!--    background: #007bff;-->
+<!--    color: #fff;-->
+<!--}-->
 
-<!--		/* Book Appointment Button */-->
-<!--		.btn {-->
-<!--			background: #007bff;-->
-<!--			color: white;-->
-<!--			padding: 12px;-->
-<!--			width: 100%;-->
-<!--			border: none;-->
-<!--			border-radius: 4px;-->
-<!--			cursor: pointer;-->
-<!--			font-size: 16px;-->
-<!--			text-align: center;-->
-<!--			transition: 0.3s;-->
-<!--		}-->
+<!--.btn {-->
+<!--    background: #007bff;-->
+<!--    color: white;-->
+<!--    padding: 12px;-->
+<!--    width: 100%;-->
+<!--    border: none;-->
+<!--    border-radius: 6px;-->
+<!--    cursor: pointer;-->
+<!--    font-size: 16px;-->
+<!--    text-align: center;-->
+<!--    transition: 0.3s;-->
+<!--}-->
 
-<!--		.btn-back {-->
-<!--			background: #007bff;-->
-<!--			color: white;-->
-<!--			padding: 12px;-->
-<!--			width: 7%;-->
-<!--			border: none;-->
-<!--			border-radius: 4px;-->
-<!--			cursor: pointer;-->
-<!--			font-size: 16px;-->
-<!--			text-align: center;-->
-<!--			transition: 0.3s;-->
-<!--			margin-left: 20px;-->
-<!--			margin-top: 10px;-->
-<!--		}-->
+<!--.btn:hover {-->
+<!--    background: #0056b3;-->
+<!--}-->
 
-<!--		.btn-back:hover {-->
-<!--			background: #0056b3;-->
-<!--		}-->
+<!--.btn-back {-->
+<!--    background: transparent;-->
+<!--    color: #007bff;-->
+<!--    border: none;-->
+<!--    cursor: pointer;-->
+<!--    font-size: 14px;-->
+<!--    margin-bottom: 10px;-->
+<!--}-->
 
-<!--		.btn:hover {-->
-<!--			background: #0056b3;-->
-<!--		}-->
+<!--.btn-back:hover {-->
+<!--    text-decoration: underline;-->
+<!--}-->
 
-<!--		.message {-->
-<!--			padding: 15px;-->
-<!--			border-radius: 8px;-->
-<!--			margin-bottom: 20px;-->
-<!--			font-size: 14px;-->
-<!--		}-->
+<!--.message {-->
+<!--    padding: 12px;-->
+<!--    border-radius: 6px;-->
+<!--    margin-bottom: 20px;-->
+<!--    font-size: 14px;-->
+<!--}-->
 
-<!--		.success {-->
-<!--			background-color: #dff0d8;-->
-<!--			color: #3c763d;-->
-<!--			border: 1px solid #d6e9c6;-->
-<!--		}-->
+<!--.success {-->
+<!--    background-color: #d4edda;-->
+<!--    color: #155724;-->
+<!--    border: 1px solid #c3e6cb;-->
+<!--}-->
 
-<!--		.error {-->
-<!--			background-color: #f2dede;-->
-<!--			color: #a94442;-->
-<!--			border: 1px solid #ebccd1;-->
-<!--		}-->
+<!--.error {-->
+<!--    background-color: #f8d7da;-->
+<!--    color: #721c24;-->
+<!--    border: 1px solid #f5c6cb;-->
+<!--}-->
 
-<!--		/* Responsive Design */-->
-<!--		@media screen and (max-width: 768px) {-->
-<!--			.container {-->
-<!--				flex-direction: column;-->
-<!--			}-->
+<!--select {-->
+<!--    width: 100%;-->
+<!--    padding: 10px;-->
+<!--    border-radius: 6px;-->
+<!--    border: 1px solid #ccc;-->
+<!--    font-size: 14px;-->
+<!--}-->
 
-<!--			.date-container {-->
-<!--				grid-template-columns: repeat(3, 1fr);-->
-<!--			}-->
-<!--		}-->
 <!--	</style>-->
 <!--</head>-->
 
 <!--<body>-->
-<!--	<button class="btn-back"-->
-<!--			th:onclick="|window.location.href='/patient/${patientId}/appointments'|">Back</button>-->
-<!--	<div class="container">-->
-<!--		<h1>Reschedule Your Appointment</h1>-->
+<!--<div class="container">-->
+<!--	<button class="btn-back" th:onclick="|window.location.href='/patient/${patientId}/appointments'|">&larr; Back</button>-->
+<!--	<h1>Reschedule Your Appointment</h1>-->
 
-<!--		&lt;!&ndash; Success/Error Message &ndash;&gt;-->
-<!--		<div th:if="${success}" class="message success">-->
-<!--			<p th:text="${successMessage}"></p>-->
-<!--		</div>-->
-<!--		<div th:if="${error}" class="message error">-->
-<!--			<p th:text="${errorMessage}"></p>-->
-<!--		</div>-->
-
-<!--		&lt;!&ndash; Reschedule Form - -->
-<!--		<form method="POST"-->
-<!--			th:action="@{/patient/{patientId}/appointments/reschedule/{appointmentId}(patientId=${patientId},appointmentId=${appointmentId})}">-->
-<!--			<div class="form-group">-->
-<!--				<label for="appointmentDate">New Appointment Date</label>-->
-<!--				<input type="date" id="appointmentDate" name="newDate" required>-->
-<!--			</div>-->
-
-<!--			<div class="form-group">-->
-<!--				<label for="appointmentTime">New Appointment Time</label>-->
-<!--				<input type="time" id="appointmentTime" name="newTime" required>-->
-<!--			</div>-->
-
-<!--			<button type="submit">Confirm Reschedule</button>-->
-<!--		</form>&ndash;&gt;-->
-
-<!--		<form id="dateSelectionForm"-->
-<!--			th:action="@{/patient/{patientId}/appointments/{appointmentId}/reschedule-timeslots(patientId=${patientId}, appointmentId=${appointmentId})}"-->
-<!--			th:object="${rescheduleAppointmentDTO}" method="get" th:if="${availableTimeslots == null}">-->
-
-<!--			&lt;!&ndash; Date Selection &ndash;&gt;-->
-<!--			<div class="form-group">-->
-<!--				<label>Select Date</label>-->
-<!--				<div class="date-container">-->
-<!--					<input type="hidden" th:field="*{newDate}" />-->
-<!--					<div th:each="date : ${nextSevenDaysFormatted}">-->
-<!--						<button type="submit" th:value="${date}" th:text="${date}" th:attr="data-date=${date}"-->
-<!--							onclick="this.form.querySelector('input[name=newDate]').value=this.dataset.date;">-->
-<!--						</button>-->
-<!--					</div>-->
-<!--				</div>-->
-<!--			</div>-->
-<!--		</form>-->
-
-<!--		<form th:if="${availableTimeslots != null}"-->
-<!--			th:action="@{/patient/{patientId}/appointments/reschedule/{appointmentId}(patientId=${patientId}, appointmentId=${appointmentId})}"-->
-<!--			th:object="${rescheduleAppointmentDTO}" method="post">-->
-
-<!--			<input type="hidden" th:field="*{newDate}" th:value="${rescheduleAppointmentDTO.newDate}" />-->
-<!--			<div class="form-group">-->
-<!--				<label>Select Date</label>-->
-<!--				<div class="date-container">-->
-<!--					<div th:each="date : ${nextSevenDaysFormatted}">-->
-<!--						<button th:name="newDate" th:value="${date}" th:text="${date}"-->
-<!--							th:classappend="${rescheduleAppointmentDTO.newDate == date} ? 'selected' : ''">-->
-<!--						</button>-->
-<!--					</div>-->
-<!--				</div>-->
-<!--			</div>-->
-
-<!--			<div class="form-group">-->
-<!--				<label for="appointmentTime">Available Time Slots:</label>-->
-<!--				<select th:field="*{newTime}">-->
-<!--					<option value="">Select a Time Slot</option>-->
-<!--					<option th:each="slot : ${availableTimeslots}" th:value="${slot}" th:text="${slot}"></option>-->
-<!--				</select>-->
-<!--			</div>-->
-
-<!--			<button type="submit" class="btn">Reschedule Appointment</button>-->
-<!--		</form>-->
+<!--	&lt;!&ndash; Success/Error Message &ndash;&gt;-->
+<!--	<div th:if="${success}" class="message success">-->
+<!--		<p th:text="${successMessage}"></p>-->
 <!--	</div>-->
+<!--	<div th:if="${error}" class="message error">-->
+<!--		<p th:text="${errorMessage}"></p>-->
+<!--	</div>-->
+
+<!--	<form id="dateSelectionForm"-->
+<!--		  th:action="@{/patient/{patientId}/appointments/{appointmentId}/reschedule-timeslots(patientId=${patientId}, appointmentId=${appointmentId})}"-->
+<!--		  th:object="${rescheduleAppointmentDTO}" method="get" th:if="${availableTimeslots == null}">-->
+<!--		<div class="form-group">-->
+<!--			<label>Select Date</label>-->
+<!--			<div class="date-container">-->
+<!--				<input type="hidden" th:field="*{newDate}" />-->
+<!--				<div th:each="date : ${nextSevenDaysFormatted}">-->
+<!--					<button type="submit" class="date-item" th:value="${date}" th:text="${date}"-->
+<!--							th:attr="data-date=${date}"-->
+<!--							onclick="this.form.querySelector('input[name=newDate]').value=this.dataset.date;">-->
+<!--					</button>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--	</form>-->
+
+<!--	<form th:if="${availableTimeslots != null}"-->
+<!--		  th:action="@{/patient/{patientId}/appointments/reschedule/{appointmentId}(patientId=${patientId}, appointmentId=${appointmentId})}"-->
+<!--		  th:object="${rescheduleAppointmentDTO}" method="post">-->
+
+<!--		<input type="hidden" th:field="*{newDate}" th:value="${rescheduleAppointmentDTO.newDate}" />-->
+<!--		<div class="form-group">-->
+<!--			<label>Select Date</label>-->
+<!--			<div class="date-container">-->
+<!--				<div th:each="date : ${nextSevenDaysFormatted}">-->
+<!--					<button class="date-item" th:name="newDate" th:value="${date}" th:text="${date}"-->
+<!--							th:classappend="${rescheduleAppointmentDTO.newDate == date} ? 'selected' : ''">-->
+<!--					</button>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--		</div>-->
+
+<!--		<div class="form-group">-->
+<!--			<label for="appointmentTime">Available Time Slots:</label>-->
+<!--			<select th:field="*{newTime}">-->
+<!--				<option value="">Select a Time Slot</option>-->
+<!--				<option th:each="slot : ${availableTimeslots}" th:value="${slot}" th:text="${slot}"></option>-->
+<!--			</select>-->
+<!--		</div>-->
+
+<!--		<button type="submit" class="btn">Reschedule Appointment</button>-->
+<!--	</form>-->
+<!--</div>-->
 <!--</body>-->
 
 <!--</html>-->
